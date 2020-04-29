@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.diamondnetwork.mapper.TransactionMapper">
+
+    <resultMap type="io.diamondnetwork.model.Transaction" id="tx">
+        <result column="timestamp" property="createdAt"/>
+    </resultMap>
+
+
+    <!--查询广告列表-->
+    <select id="getTxList" resultMap="tx">
+        select * from t_transaction
+        where 1 = 1
+        <if test="height != null">
+            and height = #{height}
+        </if>
+
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="getTx" resultMap="tx">
+        select id, full_hash,sender_id, height, recipient_id, type, subtype, amount as quantity, timestamp,fee, version, attachment_bytes from transaction
+        where full_hash = #{txHash}
+    </select>
+
+    <select id="getLatestTxList" resultMap="tx">
+        select * from t_transaction
+
+        ORDER BY created_at DESC
+    </select>
+
+
+    <select id="getTxListByAccount" resultMap="tx">
+        select id,full_hash, height,sender_id, recipient_id, type, subtype, amount as quantity, timestamp,fee, version, attachment_bytes from transaction
+
+        where sender_id = #{accountId} or recipient_id = #{accountId}
+        or id in (select transaction_id from indirect_incoming where account_id = #{accountId})
+        ORDER BY timestamp DESC
+    </select>
+
+    <select id="getTxCountByAccount" resultType="int">
+        select count(*) from transaction
+
+        where sender_id = #{accountId} or recipient_id = #{accountId}
+        or id in (select transaction_id from indirect_incoming where account_id = #{accountId})
+        ORDER BY timestamp DESC
+    </select>
+
+
+
+</mapper>

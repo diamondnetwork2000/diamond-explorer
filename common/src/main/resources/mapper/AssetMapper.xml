@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.diamondnetwork.mapper.AssetMapper">
+
+    <resultMap type="io.diamondnetwork.model.Asset" id="asset">
+        <result column="timestamp" property="createdAt"/>
+        <result column="account_id" property="issuerId"/>
+    </resultMap>
+
+    <resultMap type="io.diamondnetwork.model.Order" id="order">
+    </resultMap>
+
+    <resultMap type="io.diamondnetwork.model.AssetTransfer" id="at">
+        <result column="timestamp" property="createdAt"/>
+        <result column="account_id" property="issuerId"/>
+    </resultMap>
+
+    <!--查询广告列表-->
+    <select id="getAssetList" resultMap="asset">
+        select a.*,b.timestamp from asset a left join block b on b.height = a.height
+        order by a.height
+    </select>
+    <select id="getAsset" resultMap="asset">
+        select a.*,b.timestamp from asset a left join block b on b.height = a.height
+        where a.id = #{assetId}
+    </select>
+
+
+    <select id="getAskOrder" resultMap="order">
+        select * from ask_order where id = #{orderId}
+    </select>
+
+
+    <select id="getBidOrder" resultMap="order">
+        select * from bid_order where id = #{orderId}
+    </select>
+
+
+    <select id="getAssetAccountNum" resultMap="asset">
+        select a.id,count(aa.account_id) as holderNum from asset a
+        left join account_asset aa on aa.asset_id=a.id where aa.latest=1 and a.id in
+        <foreach item="asset"  collection="assetIdList" open="(" separator="," close=")">
+            #{asset}
+        </foreach>
+        group by a.id
+    </select>
+
+    <select id="getAssetTransferNum" resultMap="asset">
+        select asset_id as id, count(*) as transferNum from asset_transfer where asset_id in
+        <foreach item="asset"  collection="assetIdList" open="(" separator="," close=")">
+            #{asset}
+        </foreach>
+        group by asset_id
+
+    </select>
+    <select id="getAssetTransfer" resultMap="at">
+        select * from asset_transfer
+        where asset_id = #{assetId}
+        order by timestamp DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.diamondnetwork.mapper.BlockMapper">
+
+    <resultMap type="io.diamondnetwork.model.Block" id="block">
+        <result column="created_by" property="generator"/>
+    </resultMap>
+
+
+    <!--查询广告列表-->
+    <select id="getBlockList" resultMap="block">
+        select * from t_block
+
+        where 1=1
+        <if test="startHeight != null">
+            and height <![CDATA[ <= ]]> #{startHeight}
+            and height <![CDATA[ >= ]]>  #{endHeight}
+        </if>
+        ORDER BY height DESC
+    </select>
+    <select id="getBlock" resultMap="block">
+        select * from t_block where height = #{height}
+    </select>
+
+    <select id="countBlocks" resultType="java.lang.Integer">
+        select count(*) from t_block
+    </select>
+
+
+</mapper>

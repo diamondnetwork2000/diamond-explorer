@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://45.204.12.243:3306/dkd_explorer?&useLegacyDatetimeCode=false&useTimezone=true&serverTimezone=Hongkong&useUnicode=true&characterEncoding=utf8&autoReconnect=true&transformedBitIsBoolean=true&useSSL=false
+    username: bluex2
+    password: '1c521ee92a@Bluex'
+    #type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+    #  minimum-idle: 5
+    #  maximum-pool-size: 40
+    #  connection-test-query: SELECT 1
+
+########################## log ##########################
+logging:
+  config: classpath:config/log/log.xml
+  file: ./logs/api.log
+
+diamond:
+  node:
+    url: http://156.253.13.79:1317/
