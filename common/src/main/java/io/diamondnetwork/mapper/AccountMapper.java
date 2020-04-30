@@ -25,6 +25,6 @@ public interface AccountMapper extends BaseMapper<Account> {
 
     List<Account>  getAccountAssetNum(@Param("accountIdList") List<Long> accountIdList);
 
-    Account getAccount(@Param("accountId") Long accountId);
+    Account getAccount(@Param("address") String address);
     int countAccounts(@Param("address") String address);
 }

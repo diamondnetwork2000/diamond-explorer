@@ -1,5 +1,6 @@
 package io.diamondnetwork.task;
 
+import io.diamondnetwork.task.response.AccountBalancesResponse;
 import io.diamondnetwork.task.response.BankTxResponse;
 import io.diamondnetwork.task.response.BlockDetail;
 import io.diamondnetwork.task.response.ListTokenResponse;
@@ -22,4 +23,7 @@ public interface DkdChainRpcApi {
 
     @GET("asset/tokens")
     Call<ListTokenResponse> listTokens();
+
+    @GET("bank/balances/{address}")
+    Call<AccountBalancesResponse> accountBalances(@Path("address") String address);
 }

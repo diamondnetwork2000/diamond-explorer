@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @Api(tags = "区块")
 @RequestMapping("/accounts")
 @RestController
@@ -34,11 +36,11 @@ public class AccountController {
 
     @ApiOperation(value = "账号详情")
     @GetMapping("detail")
-    public CommonResponse<Account> getBlockList(@RequestParam String accountId
-                                       ) {
+    public CommonResponse<Account> getBlockList(@RequestParam String address
+                                       ) throws IOException {
 
 
-        Account voList = accountService.getAccount(0L);
+        Account voList = accountService.getAccount(address);
         return new CommonResponse(voList);
     }
 
@@ -46,11 +48,11 @@ public class AccountController {
     @ApiOperation(value = "账号持有的资产")
     @GetMapping("assets")
     public CommonListResponse<Account> getBlockList3(
-           @RequestParam String accountId,
+           @RequestParam String address,
            @RequestParam Integer pageNo,
                                                    @RequestParam Integer pageSize) {
 
-        Page<AccountAsset> voList = accountService.getAccountAssets(0L,pageNo, pageSize);
+        Page<AccountAsset> voList = accountService.getAccountAssets(address,pageNo, pageSize);
         return CommonListResponse.fromPage(voList);
     }
 }

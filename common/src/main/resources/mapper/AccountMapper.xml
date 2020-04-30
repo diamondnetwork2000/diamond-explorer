@@ -3,11 +3,9 @@
 <mapper namespace="io.diamondnetwork.mapper.AccountMapper">
 
     <resultMap type="io.diamondnetwork.model.Account" id="account">
-        <result column="timestamp" property="createdAt"/>
     </resultMap>
 
     <resultMap type="io.diamondnetwork.model.AccountAsset" id="accountAsset">
-        <result column="timestamp" property="createdAt"/>
     </resultMap>
 
 
@@ -15,19 +13,14 @@
 
     <!--查询广告列表-->
     <select id="getAccountList" resultMap="account">
-        select a.id, a.balance, a.creation_height, b.timestamp, a.forged_balance, count(t.id) as txNum from account a
-        left join transaction t on (t.sender_id = a.id or t.recipient_id = a.id)
-        left join block b on (a.creation_height = b.height)
-        where a.latest = 1
-        group by a.id
-        order by a.id
+        select * from t_account
+
+        order by creation_height
     </select>
 
     <select id="getAccount" resultMap="account">
-        select a.id, a.balance, a.creation_height, b.timestamp, a.forged_balance, count(t.id) as txNum from account a
-        left join transaction t on (t.sender_id = a.id or t.recipient_id = a.id)
-        left join block b on (a.creation_height = b.height)
-        where a.latest = 1 and a.id=#{accountId}
+        select * from t_account
+        where address = #{address}
     </select>
 
     <select id="countAccounts" resultType="java.lang.Integer">
@@ -35,20 +28,9 @@
         <if test="address!=null">
             address=#{address}
         </if>
-
-
     </select>
 
-    <select id="getAccountAssetNum" resultMap="account">
-        select a.id, count(aa.account_id) as assetNum from account a
-        left join account_asset aa on (a.id = aa.account_id)
-        where a.latest = 1 and aa.latest = 1
-        and a.id in
-        <foreach item="account"  collection="accountIdList" open="(" separator="," close=")">
-            #{account}
-        </foreach>
-        group by a.id
-    </select>
+
 
     <select id="getAccountAssets" resultMap="accountAsset">
         select aa.account_id, a.id as asset_id,

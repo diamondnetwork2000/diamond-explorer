@@ -1,6 +1,7 @@
 package io.diamondnetwork.service;
 
 import io.diamondnetwork.task.DkdChainRpcApi;
+import io.diamondnetwork.task.response.AccountBalancesResponse;
 import io.diamondnetwork.task.response.BankTxResponse;
 import io.diamondnetwork.task.response.BlockDetail;
 import io.diamondnetwork.task.response.ListTokenResponse;
@@ -74,6 +75,16 @@ public class BlockchainService {
         Response<ListTokenResponse> response = call.execute();
         if (response.code() != 200) {
             log.error("failed to list tokens, response: {}", response.toString());
+            throw new RuntimeException();
+        }
+        return response.body();
+    }
+
+    public AccountBalancesResponse accountBalances(String address) throws IOException {
+        Call<AccountBalancesResponse> call = api.accountBalances(address);
+        Response<AccountBalancesResponse> response = call.execute();
+        if (response.code() != 200) {
+            log.error("failed to get account balances, account: {} response: {}", address, response.toString());
             throw new RuntimeException();
         }
         return response.body();
