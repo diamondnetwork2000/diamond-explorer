@@ -37,7 +37,7 @@ public class AccountBalancesResponse {
 
         private Object locked_coins;
         private List<CoinsBean> coins;
-        private List<?> frozen_coins;
+        private List<CoinsBean> frozen_coins;
 
         public Object getLocked_coins() {
             return locked_coins;
@@ -55,11 +55,11 @@ public class AccountBalancesResponse {
             this.coins = coins;
         }
 
-        public List<?> getFrozen_coins() {
+        public List<CoinsBean> getFrozen_coins() {
             return frozen_coins;
         }
 
-        public void setFrozen_coins(List<?> frozen_coins) {
+        public void setFrozen_coins(List<CoinsBean> frozen_coins) {
             this.frozen_coins = frozen_coins;
         }
 

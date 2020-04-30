@@ -47,10 +47,10 @@ public class AccountController {
 
     @ApiOperation(value = "账号持有的资产")
     @GetMapping("assets")
-    public CommonListResponse<Account> getBlockList3(
+    public CommonListResponse<Account> accountAssets(
            @RequestParam String address,
            @RequestParam Integer pageNo,
-                                                   @RequestParam Integer pageSize) {
+                                                   @RequestParam Integer pageSize) throws IOException {
 
         Page<AccountAsset> voList = accountService.getAccountAssets(address,pageNo, pageSize);
         return CommonListResponse.fromPage(voList);

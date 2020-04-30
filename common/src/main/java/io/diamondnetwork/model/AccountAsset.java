@@ -1,7 +1,6 @@
 package io.diamondnetwork.model;
 
-import burst.kit.crypto.BurstCrypto;
-import burst.kit.entity.BurstID;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 
 @Data
@@ -19,33 +17,25 @@ import java.math.RoundingMode;
 @Accessors(chain = true)
 @ApiModel("区块")
 public class AccountAsset {
-    private long accountId;
-    private long assetId;
+    private String address;
     private String assetName;
-    @JsonIgnore
-    private long assetTotalQuantity;
     private long quantity;
-    @JsonIgnore
-    private long unconfirmedQuantity;
+    private long frozenQuantity;
     private int height;
+    private long totalSupply;
 
+    public AccountAsset(String address, String assetName,Long quantity) {
+        this.address = address;
+        this.assetName = assetName;
+        this.quantity = quantity;
+    }
 
-    //含有份额， .1代表10%
     public BigDecimal getShare() {
-        BigDecimal share = new BigDecimal(quantity).divide(new BigDecimal(assetTotalQuantity), 4, RoundingMode.HALF_UP);
-        return share;
-    }
+        if (totalSupply == 0) {
+            return BigDecimal.ZERO;
+        }
 
-    public long getFrozenQuantity() {
-        return quantity - unconfirmedQuantity;
-    }
-
-    public String getAccountRs() {
-        String rs = BurstCrypto.getInstance().rsEncode(BurstID.fromLong(accountId));
-        return "1x" + rs.replaceAll("-","");
-    }
-
-    public String getAssetStrId() {
-        return String.valueOf(assetId);
+        return BigDecimal.valueOf(quantity).add(BigDecimal.valueOf(frozenQuantity))
+                .divide(BigDecimal.valueOf(totalSupply), 4, RoundingMode.HALF_UP);
     }
 }

@@ -6,6 +6,7 @@ import io.diamondnetwork.mapper.TransactionMapper;
 import io.diamondnetwork.model.Account;
 import io.diamondnetwork.model.AccountAsset;
 import io.diamondnetwork.task.response.AccountBalancesResponse;
+import io.diamondnetwork.task.response.ListTokenResponse;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,10 +36,38 @@ public class AccountService {
     }
 
     public Page<AccountAsset>  getAccountAssets(String address,
-                                         Integer pageNo, Integer pageSize) {
-        Page<AccountAsset> list = accountMapper.getAccountAssets(address, new RowBounds(pageNo, pageSize));
+                                         Integer pageNo, Integer pageSize) throws IOException {
 
-        return list;
+        AccountBalancesResponse accountBalancesResponse = blockchainService.accountBalances(address);
+
+        Page<AccountAsset> assets = new Page<>();
+        if (accountBalancesResponse.getResult().getCoins() != null) {
+            accountBalancesResponse.getResult().getCoins().forEach( m ->
+                            assets.add(new AccountAsset(address, m.getDenom(), Long.valueOf(m.getAmount())))
+                    );
+        }
+
+        Map<String, AccountAsset> assetName2AssetMap = assets.stream().collect(Collectors.toMap(m->m.getAssetName(), m->m));
+
+        if (accountBalancesResponse.getResult().getFrozen_coins() != null) {
+            accountBalancesResponse.getResult().getFrozen_coins().forEach( m ->
+                    assetName2AssetMap.get(m.getDenom()).setFrozenQuantity(Long.valueOf(m.getAmount()))
+            );
+        }
+
+        ListTokenResponse listTokenResponse = blockchainService.listTokens();
+        if (listTokenResponse.getResult() != null) {
+            listTokenResponse.getResult().forEach(m -> {
+                        AccountAsset a = assetName2AssetMap.get(m.getValue().getSymbol());
+                        if (a != null) {
+                            a.setTotalSupply(Long.valueOf(m.getValue().getTotal_supply()));
+                        }
+
+                    }
+                   );
+        }
+
+        return assets;
     }
 
     public Account getAccount(String address) throws IOException {
