@@ -1,5 +1,6 @@
 package io.diamondnetwork.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -32,6 +33,7 @@ public class Transaction {
     private int height;
     private int msgNum;
     //查询详情时会返回区块的信息
+    @TableField(exist = false)
     private Block block;
 
 }

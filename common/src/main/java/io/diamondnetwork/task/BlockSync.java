@@ -34,10 +34,20 @@ public class BlockSync {
 
             @Override
             public void run() {
-                syncTxs();
+                syncTransfer();
             }
         };
-     //   txSyncThread.start();
+        txSyncThread.start();
+
+
+        Thread tokenSyncThread = new Thread() {
+
+            @Override
+            public void run() {
+                syncToken();
+            }
+        };
+        tokenSyncThread.start();
     }
 
     private void syncBlock() {
@@ -63,13 +73,38 @@ public class BlockSync {
 
     }
 
-    private void syncTxs() {
+    private void syncTransfer() {
         while (true) {
             try {
                 int lastPage = Integer.valueOf(configMapper.getConfigByName("last_tx_page").getConfValue());
-                int result = syncService.syncTx("bankx",lastPage, 20);
+                int result = syncService.syncTransfer(lastPage, 20);
                 if (result > 0) {
                     configMapper.updateConfigValue("last_tx_page", String.valueOf(++lastPage));
+                    Thread.sleep(500L);
+                } else {
+                    Thread.sleep(2000L);
+                }
+            } catch (Throwable e) {
+                try {
+                    Thread.sleep(5000L);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
+    private void syncToken() {
+        while (true) {
+            try {
+                int lastPage = Integer.valueOf(configMapper.getConfigByName("last_token_page").getConfValue());
+                int result = syncService.syncToken(lastPage, 20);
+                if (result > 0) {
+                    //只有处理处理后才能更新
+                    configMapper.updateConfigValue("last_token_page", String.valueOf(++lastPage));
                     Thread.sleep(500L);
                 } else {
                     Thread.sleep(2000L);

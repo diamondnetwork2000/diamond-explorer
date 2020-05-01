@@ -1,3 +1,5 @@
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 DROP TABLE IF EXISTS `t_config`;
 CREATE TABLE `t_config` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
@@ -10,8 +12,6 @@ CREATE TABLE `t_config` (
 
 
 DROP TABLE IF EXISTS `t_block`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `t_block` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `height` bigint(20) NOT NULL COMMENT '区块高度',
@@ -30,8 +30,6 @@ CREATE TABLE `t_block` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `t_transaction`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `t_transaction` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `type` varchar(20) NOT NULL ,
@@ -49,8 +47,6 @@ CREATE TABLE `t_transaction` (
 
 
 DROP TABLE IF EXISTS `t_account`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `t_account` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `address` varchar(64) NOT NULL ,
@@ -62,4 +58,36 @@ CREATE TABLE `t_account` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_address` (`address`),
   KEY `ix_height` (`creation_height`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `t_asset`;
+CREATE TABLE `t_asset` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(16) NOT NULL ,
+  `description` varchar(64) NOT NULL COMMENT '全部数量' ,
+  `total_supply` bigint(20) NOT NULL COMMENT '全部数量',
+  `issuer` varchar(64) NOT NULL COMMENT '发行账号地址',
+  `decimals` int(20) NOT NULL COMMENT '分解个数',
+  `created_at` datetime NOT NULL COMMENT '出块时间',
+  `creation_height` bigint(20) NOT NULL COMMENT '出块时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ix_name` (`name`),
+  KEY `ix_height` (`creation_height`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `t_transfer`;
+CREATE TABLE `t_transfer` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `height` bigint(20) NOT NULL COMMENT '区块高度',
+  `tx_hash` varchar(64) NOT NULL COMMENT '交易哈希',
+  `sender` varchar(64) NOT NULL COMMENT '交易发送者',
+  `recipient` varchar(64) NOT NULL COMMENT '交易接受者，在发币交易中，接收者就是发币者',
+  `amount` bigint(20) NOT NULL COMMENT '数量',
+  `token` varchar(64) NOT NULL COMMENT '发送的代币名称',
+  `created_at` datetime NOT NULL COMMENT '交易时间',
+  PRIMARY KEY (`id`),
+  KEY `ix_hash` (`tx_hash`),
+  KEY `ix_height` (`height`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -55,7 +55,7 @@ public class TransactionService {
         Transaction tx = transactionDao.getTx(hashBytes);
         tx.setBlock(blockMapper.getBlock(tx.getHeight()));
 
-        if (tx.getAttachment() != null) {
+       /* if (tx.getAttachment() != null) {
             logger.info("tx: {} with attachment: {}", txHash, tx.getAttachment().getClass());
             if (tx.getAttachment() instanceof ColoredCoinsOrderPlacement) {
                 ColoredCoinsOrderPlacement order = (ColoredCoinsOrderPlacement) tx.getAttachment();
@@ -79,7 +79,7 @@ public class TransactionService {
             } else if (tx.getAttachment() instanceof ColoredCoinsOrderCancellation) {
                 ColoredCoinsOrderCancellation order = (ColoredCoinsOrderCancellation) tx.getAttachment();
 
-                /*if (tx.getSubType() == TransactionType.SUBTYPE_COLORED_COINS_ASK_ORDER_CANCELLATION) {
+                *//*if (tx.getSubType() == TransactionType.SUBTYPE_COLORED_COINS_ASK_ORDER_CANCELLATION) {
                     Order askOrder = assetMapper.getAskOrder(order.getOrderId());
 
                     Asset asset = assetMapper.getAsset(askOrder.getAssetId());
@@ -92,7 +92,7 @@ public class TransactionService {
                     }
 
                     order.setOrder(askOrder);
-                } else */{
+                } else *//*{
                     Order bidOrder = assetMapper.getBidOrder(order.getOrderId());
 
                     Asset asset = assetMapper.getAsset(bidOrder.getAssetId());
@@ -107,7 +107,7 @@ public class TransactionService {
                 }
                 tx.setAttachment(order);
             }
-        }
+        }*/
 
         return tx;
     }

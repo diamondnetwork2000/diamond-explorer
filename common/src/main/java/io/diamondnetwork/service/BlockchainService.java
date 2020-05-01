@@ -1,10 +1,7 @@
 package io.diamondnetwork.service;
 
 import io.diamondnetwork.task.DkdChainRpcApi;
-import io.diamondnetwork.task.response.AccountBalancesResponse;
-import io.diamondnetwork.task.response.BankTxResponse;
-import io.diamondnetwork.task.response.BlockDetail;
-import io.diamondnetwork.task.response.ListTokenResponse;
+import io.diamondnetwork.task.response.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -58,8 +55,8 @@ public class BlockchainService {
     }
 
 
-    public BankTxResponse searchTxs(String module, int page, int limit) throws IOException {
-        Call<BankTxResponse> call = api.searchTxs(module, page, limit);
+    public BankTxResponse searchBankTxs(String module, int page, int limit) throws IOException {
+        Call<BankTxResponse> call = api.searchBankTxs(module, page, limit);
         Response<BankTxResponse> response = call.execute();
         if (response.code() != 200) {
             log.error("failed to search tx for module: {}, page: {}, response: {}", module, page, response.toString());
@@ -67,6 +64,30 @@ public class BlockchainService {
         }
 
         BankTxResponse body = response.body();
+        return body;
+    }
+
+    public AssetTxResponse searchAssetTxs(String module, int page, int limit) throws IOException {
+        Call<AssetTxResponse> call = api.searchAssetTxs(module, page, limit);
+        Response<AssetTxResponse> response = call.execute();
+        if (response.code() != 200) {
+            log.error("failed to search tx for module: {}, page: {}, response: {}", module, page, response.toString());
+            return null;
+        }
+
+        AssetTxResponse body = response.body();
+        return body;
+    }
+
+    public OrderTxResponse searchMarketTxs(String module, int page, int limit) throws IOException {
+        Call<OrderTxResponse> call = api.searchMarketTxs(module, page, limit);
+        Response<OrderTxResponse> response = call.execute();
+        if (response.code() != 200) {
+            log.error("failed to search tx for module: {}, page: {}, response: {}", module, page, response.toString());
+            return null;
+        }
+
+        OrderTxResponse body = response.body();
         return body;
     }
 

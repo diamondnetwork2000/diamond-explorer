@@ -1,9 +1,6 @@
 package io.diamondnetwork.task;
 
-import io.diamondnetwork.task.response.AccountBalancesResponse;
-import io.diamondnetwork.task.response.BankTxResponse;
-import io.diamondnetwork.task.response.BlockDetail;
-import io.diamondnetwork.task.response.ListTokenResponse;
+import io.diamondnetwork.task.response.*;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -17,9 +14,19 @@ public interface DkdChainRpcApi {
     Call<BlockDetail> latestBlock();
 
     @GET("txs")
-    Call<BankTxResponse> searchTxs(@Query("message.module") String module,
+    Call<BankTxResponse> searchBankTxs(@Query("message.module") String module,
                                    @Query("page") int page,
                                    @Query("limit") int limit);
+    @GET("txs")
+    Call<AssetTxResponse> searchAssetTxs(@Query("message.module") String module,
+                                         @Query("page") int page,
+                                         @Query("limit") int limit);
+
+
+  @GET("txs")
+    Call<OrderTxResponse> searchMarketTxs(@Query("message.module") String module,
+                                         @Query("page") int page,
+                                         @Query("limit") int limit);
 
     @GET("asset/tokens")
     Call<ListTokenResponse> listTokens();

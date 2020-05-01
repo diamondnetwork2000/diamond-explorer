@@ -2,6 +2,9 @@ package io.diamondnetwork.model;
 
 import burst.kit.crypto.BurstCrypto;
 import burst.kit.entity.BurstID;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.diamondnetwork.util.Constants;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
@@ -9,36 +12,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
 @ApiModel("区块")
+@TableName(value = "t_asset")
 public class Asset {
+    @TableId
     private long id;
     private String name;
     private String description;
-    private long height;
-    private int createdAt;
-    private long quantity;
-    private long issuerId;
-    private byte decimals;
+    private long creationHeight;
+    private Date createdAt;
+    private long totalSupply;
+    private String issuer;
+    private int decimals;
+
     //和该资产相关的转账数量
+    @TableField(exist = false)
     private int transferNum;
     //持有该资产的用户数量
+    @TableField(exist = false)
     private int holderNum;
-
-    public String getIssuer() {
-        String rs = BurstCrypto.getInstance().rsEncode(BurstID.fromLong(issuerId));
-        return "1x" + rs.replaceAll("-","");
-    }
-
-    ////浏览器对长度太大的数字会丢失精度，所以浏览器用这个字段
-    public String getStrId() {
-        return String.valueOf(id);
-    }
-
-    public int getCreatedAt() {
-        return this.createdAt + Constants.GENESIS_TIME_STAMP;
-    }
 }
