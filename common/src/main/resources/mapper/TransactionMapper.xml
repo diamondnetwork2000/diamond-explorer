@@ -3,7 +3,6 @@
 <mapper namespace="io.diamondnetwork.mapper.TransactionMapper">
 
     <resultMap type="io.diamondnetwork.model.Transaction" id="tx">
-        <result column="timestamp" property="createdAt"/>
     </resultMap>
 
 

@@ -32,12 +32,13 @@ CREATE TABLE `t_block` (
 DROP TABLE IF EXISTS `t_transaction`;
 CREATE TABLE `t_transaction` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `type` varchar(20) NOT NULL ,
+  `type` tinyint(4) NOT NULL COMMENT '1 转账（包括内置货币和代币的转账） 2: 创建订单 3： 取消订单 4 发行代币 5 创建交易市场',
+  `success` tinyint(1) NOT NULL COMMENT '1 成功 0 失败',
   `height` bigint(20) NOT NULL COMMENT '区块高度',
   `hash` varchar(64) NOT NULL COMMENT '交易哈希',
-  `sender` varchar(64) NOT NULL COMMENT '交易发送者',
-  `memo` varchar(64) NOT NULL COMMENT '交易发送者',
-  `created_at` datetime NOT NULL COMMENT '出块时间',
+  `sender` varchar(64) NOT NULL COMMENT '交易发送者地址',
+  `memo` varchar(64) NOT NULL COMMENT '交易备注',
+  `created_at` datetime NOT NULL COMMENT '所在区块的时间',
   `msg_num` int(11) NOT NULL COMMENT '消息个数',
   `fee` bigint(11) NOT NULL COMMENT '手续费',
   PRIMARY KEY (`id`),
@@ -80,6 +81,7 @@ CREATE TABLE `t_asset` (
 DROP TABLE IF EXISTS `t_transfer`;
 CREATE TABLE `t_transfer` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `type` bigint(20) NOT NULL COMMENT '1: 发行token 2: 转移token 3: 创建市场 4： DEX订单',
   `height` bigint(20) NOT NULL COMMENT '区块高度',
   `tx_hash` varchar(64) NOT NULL COMMENT '交易哈希',
   `sender` varchar(64) NOT NULL COMMENT '交易发送者',

@@ -46,3 +46,7 @@ cmd:
 
 setting:
   imageOrSms: 1   #登录时 1：使用图形验证码，2：使用短信验证码
+
+mybatis-plus:
+  # 支持统配符 * 或者 ; 分割
+  typeEnumsPackage: io.diamondnetwork.model.enums

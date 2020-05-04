@@ -24,4 +24,6 @@ public interface AssetMapper extends BaseMapper<Asset> {
 
     Order getAskOrder(@Param("orderId") long orderId);
     Order getBidOrder(@Param("orderId") long orderId);
+
+    int countAssets(@Param("symbol") String symbol);
 }

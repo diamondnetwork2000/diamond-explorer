@@ -59,4 +59,11 @@
         order by timestamp DESC
     </select>
 
+    <select id="countAssets" resultType="java.lang.Integer">
+        select count(*) from t_asset
+        where name = #{symbol}
+    </select>
+
+
+
 </mapper>

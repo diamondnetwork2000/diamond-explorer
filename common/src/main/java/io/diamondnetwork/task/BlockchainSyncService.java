@@ -1,13 +1,11 @@
 package io.diamondnetwork.task;
 
-import io.diamondnetwork.model.Asset;
+import io.diamondnetwork.model.*;
+import io.diamondnetwork.model.enums.TransactionType;
 import io.diamondnetwork.service.*;
 import io.diamondnetwork.task.response.AssetTxResponse;
 import io.diamondnetwork.task.response.BankTxResponse;
 import io.diamondnetwork.task.response.BlockDetail;
-import io.diamondnetwork.model.Account;
-import io.diamondnetwork.model.Block;
-import io.diamondnetwork.model.Transaction;
 import io.diamondnetwork.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,8 +75,10 @@ public class BlockchainSyncService {
                 tx.setHeight(Integer.valueOf(t.getHeight()));
                 tx.setCreatedAt(DateUtil.getTxTime(t.getTimestamp()));
 
+                tx.setSuccess(t.getLogs().get(0).isSuccess());
+
                 tx.setMsgNum(t.getTx().getValue().getMsg().size());
-                tx.setType("transfer");
+                tx.setType(TransactionType.TRANSFER);
                 for (BankTxResponse.TxsBean.EventsBeanX event : t.getEvents()) {
                     if (event.getType().equals("message")) {
                         for (BankTxResponse.TxsBean.EventsBeanX.AttributesBeanX attribute : event.getAttributes()) {
@@ -134,9 +134,9 @@ public class BlockchainSyncService {
                 tx.setHash(t.getTxhash());
                 tx.setHeight(Integer.valueOf(t.getHeight()));
                 tx.setCreatedAt(DateUtil.getTxTime(t.getTimestamp()));
-
+                tx.setSuccess(t.getLogs().get(0).isSuccess());
                 tx.setMsgNum(t.getTx().getValue().getMsg().size());
-                tx.setType("transfer");
+                tx.setType(TransactionType.ISSUE_TOKEN);
                 for (AssetTxResponse.TxsBean.EventsBeanX event : t.getEvents()) {
                     if (event.getType().equals("message")) {
                         for (AssetTxResponse.TxsBean.EventsBeanX.AttributesBeanX attribute : event.getAttributes()) {
@@ -164,7 +164,11 @@ public class BlockchainSyncService {
                         asset.setTotalSupply(Long.valueOf(msgBean.getValue().getTotal_supply()));
                         asset.setIssuer(msgBean.getValue().getOwner());
 
-                        assetService.addAsset(asset);
+                        if (assetService.countAssets(msgBean.getValue().getSymbol()) < 1) {
+                            assetService.addAsset(asset);
+                        }
+
+
                     }
                 }
 

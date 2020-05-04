@@ -58,4 +58,8 @@ public class AssetService {
     public void addAsset(Asset asset) {
         assetDao.insert(asset);
     }
+
+    public int countAssets(String symbol) {
+        return assetDao.countAssets(symbol);
+    }
 }

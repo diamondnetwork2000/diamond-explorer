@@ -2,6 +2,7 @@ package io.diamondnetwork.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.diamondnetwork.model.enums.TransactionType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -19,8 +20,9 @@ import java.util.Date;
 @TableName(value = "t_transaction")
 public class Transaction {
     private long id;
-    @ApiModelProperty("0:普通支付， 2：发行资产 资产转账 下单 撤单 成交")
-    private String type;
+    @ApiModelProperty("1 转账（包括内置货币和代币的转账） 2: 创建订单 3： 取消订单 4 发行代币 5 创建交易市场")
+    private TransactionType type;
+    private Boolean success;
     private String hash;
     private String sender;
     private String recipient;
