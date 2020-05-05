@@ -32,4 +32,8 @@ public class BlockService {
     public void addBlock(Block block) {
         blockDao.insert(block);
     }
+
+    public void addFeeToHeight(int height, long fee) {
+        blockDao.addFeeToHeight(height, fee);
+    }
 }

@@ -123,4 +123,6 @@ public final class Constants {
     calendar.set(Calendar.MILLISECOND, 0);
     GENESIS_TIME_STAMP = (int)(calendar.getTimeInMillis() / 1000l);
   }
+
+  public static final String nativeCoinName = "cet";
 }

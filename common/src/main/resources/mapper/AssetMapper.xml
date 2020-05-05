@@ -3,7 +3,6 @@
 <mapper namespace="io.diamondnetwork.mapper.AssetMapper">
 
     <resultMap type="io.diamondnetwork.model.Asset" id="asset">
-        <result column="timestamp" property="createdAt"/>
         <result column="account_id" property="issuerId"/>
     </resultMap>
 
@@ -17,12 +16,10 @@
 
     <!--查询广告列表-->
     <select id="getAssetList" resultMap="asset">
-        select a.*,b.timestamp from asset a left join block b on b.height = a.height
-        order by a.height
+        select * from t_asset
     </select>
     <select id="getAsset" resultMap="asset">
-        select a.*,b.timestamp from asset a left join block b on b.height = a.height
-        where a.id = #{assetId}
+        select * from t_asset where name = #{name}
     </select>
 
 

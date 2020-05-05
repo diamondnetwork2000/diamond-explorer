@@ -11,7 +11,9 @@ public interface TransactionMapper extends BaseMapper<Transaction> {
     Page<Transaction> getTxList(@Param("height") Integer height, RowBounds pageRowBounds);
     Page<Transaction> getTxListByAccount(@Param("accountId") long accountId, RowBounds pageRowBounds);
 
-    Transaction getTx(@Param("txHash") byte[] txHash);
+    Transaction getTx(@Param("txHash") String txHash);
 
     int getTxCountByAccount(@Param("accountId") long accountId);
+
+    int countTxByHash(@Param("hash") String hash);
 }

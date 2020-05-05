@@ -3,6 +3,8 @@ package io.diamondnetwork.model;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.diamondnetwork.task.response.BlockDetail;
+import io.diamondnetwork.util.DateUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -43,4 +45,20 @@ public class Block {
     @TableField(value = "hash")
     @ApiModelProperty("签名值")
     private String signature;
+
+    public static Block from(BlockDetail body) {
+        Block block = new Block();
+        block.setHeight(body.getBlock_meta().getHeader().getHeight());
+        block.setSignature(body.getBlock_meta().getBlock_id().getHash());
+        block.setCreatedAt(DateUtil.getBlockTime(body.getBlock_meta().getHeader().getTime()));
+        block.setFee(0);
+        block.setSent(0L).setReward(0L);
+        block.setGenerator(body.getBlock_meta().getHeader().getProposer_address());
+        block.setVersion(Integer.valueOf(body.getBlock_meta().getHeader().getVersion().getApp()));
+        block.setSize(Integer.valueOf(body.getBlock_meta().getBlockSize()));
+        block.setGenerator(body.getBlock().getHeader().getProposer_address());
+        block.setTxNum(Integer.valueOf(body.getBlock().getHeader().getNum_txs()));
+
+        return block;
+    }
 }

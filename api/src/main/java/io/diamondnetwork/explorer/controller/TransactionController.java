@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @Api(tags = "区块")
 @RequestMapping("/tx")
 @RestController
@@ -34,7 +36,7 @@ public class TransactionController {
 
     @ApiOperation(value = "交易详情")
     @GetMapping("detail")
-    public CommonResponse<Transaction> getTx(@ApiParam(value = "开始高度") @RequestParam( required = true) String txHash) {
+    public CommonResponse<Transaction> getTx(@ApiParam(value = "开始高度") @RequestParam( required = true) String txHash) throws IOException {
         //TODO: generator需要计算,
         Transaction vo = transactionService.getTx(txHash);
         return new CommonResponse(vo);

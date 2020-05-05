@@ -37,7 +37,7 @@ public class BlockchainService {
         Response<BlockDetail> response = call.execute();
         if (response.code() != 200) {
             log.error("failed to get block at height: {},, response: {}", height, response.toString());
-            throw new RuntimeException();
+            return null;
         }
 
         return response.body();

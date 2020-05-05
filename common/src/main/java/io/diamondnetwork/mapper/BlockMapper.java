@@ -17,4 +17,6 @@ public interface BlockMapper extends BaseMapper<Block> {
     Block getBlock(@Param("height") int height);
 
     int countBlocks();
+
+    void addFeeToHeight(@Param("height") int height, @Param("fee") long fee);
 }

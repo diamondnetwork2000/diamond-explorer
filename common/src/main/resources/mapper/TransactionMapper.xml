@@ -18,8 +18,8 @@
     </select>
 
     <select id="getTx" resultMap="tx">
-        select id, full_hash,sender_id, height, recipient_id, type, subtype, amount as quantity, timestamp,fee, version, attachment_bytes from transaction
-        where full_hash = #{txHash}
+        select * from t_transaction
+        where hash = #{txHash}
     </select>
 
     <select id="getLatestTxList" resultMap="tx">
@@ -27,6 +27,12 @@
 
         ORDER BY created_at DESC
     </select>
+
+    <select id="countTxByHash" resultType="int">
+        select count(*) from t_transaction where hash = #{hash}
+    </select>
+
+
 
 
     <select id="getTxListByAccount" resultMap="tx">

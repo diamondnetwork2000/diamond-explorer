@@ -1,12 +1,14 @@
 package io.diamondnetwork.model;
 
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 
 import java.util.Date;
 
@@ -24,4 +26,7 @@ public class Account {
     private long fee;
     private Date createdAt;
     private int creationHeight;
+    //内置货币的余额
+    @TableField(exist = false)
+    private long balance;
 }

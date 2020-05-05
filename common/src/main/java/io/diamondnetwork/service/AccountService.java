@@ -7,6 +7,7 @@ import io.diamondnetwork.model.Account;
 import io.diamondnetwork.model.AccountAsset;
 import io.diamondnetwork.task.response.AccountBalancesResponse;
 import io.diamondnetwork.task.response.ListTokenResponse;
+import io.diamondnetwork.util.Constants;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,6 +82,12 @@ public class AccountService {
 
         if (account != null && accountBalancesResponse.getResult().getCoins() != null) {
             account.setAssetNum(accountBalancesResponse.getResult().getCoins().size());
+
+            for (AccountBalancesResponse.ResultBean.CoinsBean coin : accountBalancesResponse.getResult().getCoins()) {
+                if (coin.getDenom().equals(Constants.nativeCoinName)) {
+                    account.setBalance(Long.valueOf(coin.getAmount()));
+                }
+            }
         }
 
         return account;

@@ -5,17 +5,21 @@ import io.diamondnetwork.mapper.AssetMapper;
 import io.diamondnetwork.mapper.BlockMapper;
 import io.diamondnetwork.mapper.TransactionMapper;
 import io.diamondnetwork.model.Asset;
+import io.diamondnetwork.model.Block;
 import io.diamondnetwork.model.Order;
 import io.diamondnetwork.model.Transaction;
 import io.diamondnetwork.model.attachment.ColoredCoinsAssetTransfer;
 import io.diamondnetwork.model.attachment.ColoredCoinsOrderCancellation;
 import io.diamondnetwork.model.attachment.ColoredCoinsOrderPlacement;
+import io.diamondnetwork.task.response.BlockDetail;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.shiro.codec.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 @Service
 public class TransactionService {
@@ -27,6 +31,8 @@ public class TransactionService {
     private BlockMapper blockMapper;
     @Autowired
     private AssetMapper assetMapper;
+    @Autowired
+    private BlockchainService blockchainService;
 
     public Page<Transaction> getTxList(Integer height, Integer pageNo, Integer pageSize) {
         return transactionDao.getTxList(height, new RowBounds(pageNo, pageSize));
@@ -50,10 +56,26 @@ public class TransactionService {
         return list;
     }
 
-    public Transaction getTx(String txHash) {
-        byte[] hashBytes = Hex.decode(txHash);
-        Transaction tx = transactionDao.getTx(hashBytes);
-        tx.setBlock(blockMapper.getBlock(tx.getHeight()));
+    public Transaction getTx(String txHash) throws IOException {
+
+        Transaction tx = transactionDao.getTx(txHash);
+        Block b = blockMapper.getBlock(tx.getHeight());
+        if (b == null) {
+            //还没有同步这个区块的信息
+            BlockDetail body = blockchainService.getBlock(tx.getHeight());
+            if (body != null) {
+                Block block = Block.from(body);
+                Block existed = blockMapper.getBlock(tx.getHeight());
+                if (existed == null) {
+                    blockMapper.insert(block);
+                }
+
+                tx.setBlock(block);
+            }
+        } else {
+            tx.setBlock(b);
+        }
+
 
        /* if (tx.getAttachment() != null) {
             logger.info("tx: {} with attachment: {}", txHash, tx.getAttachment().getClass());
@@ -115,5 +137,9 @@ public class TransactionService {
 
     public void addTx(Transaction block) {
         transactionDao.insert(block);
+    }
+
+    public int countTxByHash(String hash) {
+        return transactionDao.countTxByHash(hash);
     }
 }

@@ -33,24 +33,20 @@ public class BlockchainSyncService {
 
     @Transactional(rollbackFor = RuntimeException.class)
     public int syncBlock(int height) throws IOException {
+        Block b = blockService.getBlock(height);
+        if (b != null) {
+            return height;
+        }
         BlockDetail body = blockchainService.getBlock(height);
+        if (body == null) {
+            return 0;
+        }
 
-        Block block = new Block();
-        block.setHeight(body.getBlock_meta().getHeader().getHeight());
-        block.setSignature(body.getBlock_meta().getBlock_id().getHash());
-        block.setCreatedAt(DateUtil.getBlockTime(body.getBlock_meta().getHeader().getTime()));
-        block.setFee(0).setSent(0L).setReward(0L);
-        block.setGenerator(body.getBlock_meta().getHeader().getProposer_address());
-        block.setVersion(Integer.valueOf(body.getBlock_meta().getHeader().getVersion().getApp()));
-        block.setSize(Integer.valueOf(body.getBlock_meta().getBlockSize()));
-        block.setGenerator(body.getBlock().getHeader().getProposer_address());
-
+        Block block = Block.from(body);
         Block existed = blockService.getBlock(height);
         if (existed == null) {
             blockService.addBlock(block);
         }
-
-
 
         return height;
     }
@@ -73,6 +69,18 @@ public class BlockchainSyncService {
                 Transaction tx = new Transaction();
                 tx.setHash(t.getTxhash());
                 tx.setHeight(Integer.valueOf(t.getHeight()));
+                //理论上可能有多个手续费，只处理
+                tx.setFee(Long.valueOf(t.getTx().getValue().getFee().getAmount().get(0).getAmount()));
+
+
+                //如果交易所属的区块还没有， 则先同步区块
+                if (blockService.getBlock(tx.getHeight()) == null) {
+                    syncBlock(tx.getHeight());
+                } else {
+                    //增加所属区块的手续费
+                    blockService.addFeeToHeight(tx.getHeight(), tx.getFee());
+                }
+
                 tx.setCreatedAt(DateUtil.getTxTime(t.getTimestamp()));
 
                 tx.setSuccess(t.getLogs().get(0).isSuccess());
@@ -90,7 +98,10 @@ public class BlockchainSyncService {
                     }
                 }
                 tx.setMemo(t.getTx().getValue().getMemo());
-                transactionService.addTx(tx);
+
+                if (transactionService.countTxByHash(tx.getHash()) == 0) {
+                    transactionService.addTx(tx);
+                }
 
                 //检查目标地址，如果这个地址不存在account中，则新建一个账号
                 for (BankTxResponse.TxsBean.TxBean.ValueBeanX.MsgBean msgBean : t.getTx().getValue().getMsg()) {
@@ -148,7 +159,9 @@ public class BlockchainSyncService {
                     }
                 }
                 tx.setMemo(t.getTx().getValue().getMemo());
-                transactionService.addTx(tx);
+                if (transactionService.countTxByHash(tx.getHash()) == 0) {
+                    transactionService.addTx(tx);
+                }
 
                 //检查目标地址，如果这个地址不存在account中，则新建一个账号
                 for (AssetTxResponse.TxsBean.TxBean.ValueBeanX.MsgBean msgBean : t.getTx().getValue().getMsg()) {

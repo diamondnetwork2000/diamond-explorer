@@ -1,11 +1,14 @@
 package io.diamondnetwork.task;
 
 import io.diamondnetwork.mapper.ConfigMapper;
+import io.diamondnetwork.service.BlockchainService;
+import io.diamondnetwork.task.response.BlockDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 
 /**
  * 从区块链api同步区块和交易信息到本地数据库
@@ -17,6 +20,8 @@ public class BlockSync {
     private BlockchainSyncService syncService;
     @Autowired
     private ConfigMapper configMapper;
+    @Autowired
+    private BlockchainService blockchainService;
 
     @PostConstruct
     public void init() {
@@ -25,15 +30,29 @@ public class BlockSync {
 
             @Override
             public void run() {
+                this.setName("blockSyncThread");
                 syncBlock();
             }
         };
-             blockSyncThread.start();
+        blockSyncThread.start();
+
+
+
+        Thread latestBlockSyncThread = new Thread() {
+
+            @Override
+            public void run() {
+                this.setName("latestBlockSyncThread");
+                syncLatestBlock();
+            }
+        };
+        latestBlockSyncThread.start();
 
         Thread txSyncThread = new Thread() {
 
             @Override
             public void run() {
+                this.setName("txSyncThread");
                 syncTransfer();
             }
         };
@@ -44,6 +63,7 @@ public class BlockSync {
 
             @Override
             public void run() {
+                this.setName("tokenSyncThread");
                 syncToken();
             }
         };
@@ -57,7 +77,7 @@ public class BlockSync {
                 int result = syncService.syncBlock(lastHeight);
                 if (result > 0) {
                     configMapper.updateConfigValue("last_block_height", String.valueOf(++lastHeight));
-                    Thread.sleep(500L);
+                    //Thread.sleep(500L);
                 } else {
                     Thread.sleep(2000L);
                 }
@@ -70,7 +90,39 @@ public class BlockSync {
                 e.printStackTrace();
             }
         }
+    }
 
+    //同步最后一部分区块
+    private void syncLatestBlock() {
+        BlockDetail b = null;
+        try {
+            b = blockchainService.latestBlock();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int startHeight = b.getBlock_meta().getHeader().getHeight() - 1000;
+
+        while (true) {
+            try {
+
+                int height = syncService.syncBlock(startHeight);
+                if (height > 0) {
+                    ++startHeight;
+                } else {
+                    //已经没有区块可以同步，休眠
+                    Thread.sleep(1000L);
+                }
+
+            } catch (Throwable e) {
+                try {
+                    Thread.sleep(3000L);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
+                e.printStackTrace();
+            }
+        }
     }
 
     private void syncTransfer() {

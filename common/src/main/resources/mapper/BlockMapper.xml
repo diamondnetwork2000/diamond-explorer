@@ -26,5 +26,7 @@
         select count(*) from t_block
     </select>
 
-
+    <update id="addFeeToHeight">
+        update t_block set fee = fee + #{fee} where height = #{height}
+    </update>
 </mapper>
