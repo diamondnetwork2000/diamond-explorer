@@ -2,9 +2,10 @@ package io.diamondnetwork.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.github.pagehelper.Page;
+import io.diamondnetwork.model.AccountAsset;
 import io.diamondnetwork.model.Asset;
-import io.diamondnetwork.model.AssetTransfer;
 import io.diamondnetwork.model.Order;
+import io.diamondnetwork.model.Transfer;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
@@ -18,7 +19,6 @@ public interface AssetMapper extends BaseMapper<Asset> {
 
     List<Asset> getAssetAccountNum(@Param("assetIdList") List<Long> accountIdList);
     List<Asset> getAssetTransferNum(@Param("assetIdList") List<Long> accountIdList);
-    Page<AssetTransfer> getAssetTransfer(@Param("assetId") Long assetId,RowBounds rowBounds);
 
     Asset getAsset(@Param("name") String name);
 
@@ -26,4 +26,8 @@ public interface AssetMapper extends BaseMapper<Asset> {
     Order getBidOrder(@Param("orderId") long orderId);
 
     int countAssets(@Param("symbol") String symbol);
+
+    Page<Transfer> getAssetTransfer(@Param("assetName") String assetName, RowBounds rowBounds);
+
+    Page<AccountAsset> getAccountAssets(@Param("assetName") String assetName, RowBounds rowBounds);
 }

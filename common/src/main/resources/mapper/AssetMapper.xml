@@ -3,15 +3,15 @@
 <mapper namespace="io.diamondnetwork.mapper.AssetMapper">
 
     <resultMap type="io.diamondnetwork.model.Asset" id="asset">
-        <result column="account_id" property="issuerId"/>
     </resultMap>
 
     <resultMap type="io.diamondnetwork.model.Order" id="order">
     </resultMap>
 
-    <resultMap type="io.diamondnetwork.model.AssetTransfer" id="at">
-        <result column="timestamp" property="createdAt"/>
-        <result column="account_id" property="issuerId"/>
+    <resultMap type="io.diamondnetwork.model.Transfer" id="at">
+    </resultMap>
+
+    <resultMap type="io.diamondnetwork.model.AccountAsset" id="aa">
     </resultMap>
 
     <!--查询广告列表-->
@@ -51,9 +51,15 @@
 
     </select>
     <select id="getAssetTransfer" resultMap="at">
-        select * from asset_transfer
-        where asset_id = #{assetId}
-        order by timestamp DESC
+        select * from t_transfer
+        where token = #{assetName}
+        order by height DESC
+    </select>
+
+    <select id="getAccountAssets" resultMap="aa">
+        select * from t_transfer
+        where token = #{assetName}
+        order by height DESC
     </select>
 
     <select id="countAssets" resultType="java.lang.Integer">

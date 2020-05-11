@@ -5,6 +5,9 @@
     <resultMap type="io.diamondnetwork.model.Transaction" id="tx">
     </resultMap>
 
+    <resultMap type="io.diamondnetwork.model.Transfer" id="tr">
+    </resultMap>
+
 
     <!--查询广告列表-->
     <select id="getTxList" resultMap="tx">
@@ -35,12 +38,8 @@
 
 
 
-    <select id="getTxListByAccount" resultMap="tx">
-        select id,full_hash, height,sender_id, recipient_id, type, subtype, amount as quantity, timestamp,fee, version, attachment_bytes from transaction
-
-        where sender_id = #{accountId} or recipient_id = #{accountId}
-        or id in (select transaction_id from indirect_incoming where account_id = #{accountId})
-        ORDER BY timestamp DESC
+    <select id="getTxListByAccount" resultMap="tr">
+        select * from t_transfer where sender = #{address} or recipient = #{address}
     </select>
 
     <select id="getTxCountByAccount" resultType="int">

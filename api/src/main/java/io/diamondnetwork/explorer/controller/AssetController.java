@@ -6,7 +6,7 @@ import io.diamondnetwork.CommonListResponse;
 import io.diamondnetwork.CommonResponse;
 import io.diamondnetwork.model.AccountAsset;
 import io.diamondnetwork.model.Asset;
-import io.diamondnetwork.model.AssetTransfer;
+import io.diamondnetwork.model.Transfer;
 import io.diamondnetwork.service.AssetService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,9 +37,9 @@ public class AssetController {
     @ApiOperation(value = "资产详情")
     @GetMapping("detail")
     public CommonResponse<Asset> getBlockList(
-            @ApiParam(value = "资产名称，比如dkd") @RequestParam String assetName) {
+            @ApiParam(value = "资产名称，比如dkd") @RequestParam String name) {
 
-        Asset asset  = assetService.getAsset(assetName);
+        Asset asset  = assetService.getAsset(name);
         return new CommonResponse(asset);
     }
 
@@ -57,11 +57,11 @@ public class AssetController {
 
     @ApiOperation(value = "资产转账列表")
     @GetMapping("transfers")
-    public CommonListResponse<AssetTransfer> getAssetTransfer(@ApiParam(value = "资产名称， 比如dkd") @RequestParam String assetName,
-                                                              @ApiParam(value = "页数") @RequestParam Integer pageNo,
-                                                              @ApiParam(value = "页码") @RequestParam Integer pageSize) {
+    public CommonListResponse<Transfer> getAssetTransfer(@ApiParam(value = "资产名称， 比如dkd") @RequestParam String assetName,
+                                                         @ApiParam(value = "页数") @RequestParam Integer pageNo,
+                                                         @ApiParam(value = "页码") @RequestParam Integer pageSize) {
 
-        Page<AssetTransfer> voList = assetService.getAssetTransfer(assetName, pageNo, pageSize);
+        Page<Transfer> voList = assetService.getAssetTransfer(assetName, pageNo, pageSize);
         return CommonListResponse.fromPage(voList);
     }
 

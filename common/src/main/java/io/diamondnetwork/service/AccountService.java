@@ -64,6 +64,7 @@ public class AccountService {
                             a.setTotalSupply(Long.valueOf(m.getValue().getTotal_supply()));
                         }
 
+
                     }
                    );
         }

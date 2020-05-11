@@ -263,11 +263,15 @@
 
 
         <dependency>
+            <groupId>com.github.bitcoinj</groupId>
+            <artifactId>bitcoinj</artifactId>
+            <version>release-0.15-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.1.5</version>
+            <version>5.3.4</version>
         </dependency>
-
 
     </dependencies>
     </dependencyManagement>

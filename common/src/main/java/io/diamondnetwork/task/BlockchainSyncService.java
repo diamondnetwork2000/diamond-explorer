@@ -112,8 +112,20 @@ public class BlockchainSyncService {
                         if (accountService.countAccounts(msgBean.getValue().getFrom_address()) == 0) {
                             accountService.addAccount(fromTx(t.getTimestamp(), t.getHeight(),msgBean.getValue().getFrom_address()));
                         }
+
+                        for (BankTxResponse.TxsBean.TxBean.ValueBeanX.MsgBean.ValueBean.AmountBeanX amountBeanX : msgBean.getValue().getAmount()) {
+                            //把发送者和接收者都记录转账记录
+                            Transfer transfer = new Transfer();
+                            transfer.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
+                            transfer.setSender(msgBean.getValue().getFrom_address());
+                            transfer.setRecipient(msgBean.getValue().getTo_address());
+                            transfer.setToken(amountBeanX.getDenom()).setAmount(Long.valueOf(amountBeanX.getAmount()));
+                            transactionService.addTransfer(transfer);
+                        }
                     }
                 }
+
+
 
             }
 
@@ -181,6 +193,15 @@ public class BlockchainSyncService {
                             assetService.addAsset(asset);
                         }
 
+
+                        //把发送者和接收者都记录转账记录
+                        Transfer transfer = new Transfer();
+                        transfer.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
+                        transfer.setSender(msgBean.getValue().getOwner());
+                        transfer.setRecipient(msgBean.getValue().getOwner());
+                        transfer.setToken(msgBean.getValue().getSymbol())
+                                .setAmount(Long.valueOf(msgBean.getValue().getTotal_supply()));
+                        transactionService.addTransfer(transfer);
 
                     }
                 }

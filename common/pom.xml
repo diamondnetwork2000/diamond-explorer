@@ -206,7 +206,10 @@
 			<artifactId>okhttp</artifactId>
 			<version>4.5.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.github.bitcoinj</groupId>
+			<artifactId>bitcoinj</artifactId>
+		</dependency>
 
 	</dependencies>
 

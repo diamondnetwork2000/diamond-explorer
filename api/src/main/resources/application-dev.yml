@@ -18,3 +18,4 @@ logging:
 diamond:
   node:
     url: http://156.253.13.79:1317/
+    sync: false

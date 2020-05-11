@@ -4,10 +4,8 @@ import com.github.pagehelper.Page;
 import io.diamondnetwork.mapper.AssetMapper;
 import io.diamondnetwork.mapper.BlockMapper;
 import io.diamondnetwork.mapper.TransactionMapper;
-import io.diamondnetwork.model.Asset;
-import io.diamondnetwork.model.Block;
-import io.diamondnetwork.model.Order;
-import io.diamondnetwork.model.Transaction;
+import io.diamondnetwork.mapper.TransferMapper;
+import io.diamondnetwork.model.*;
 import io.diamondnetwork.model.attachment.ColoredCoinsAssetTransfer;
 import io.diamondnetwork.model.attachment.ColoredCoinsOrderCancellation;
 import io.diamondnetwork.model.attachment.ColoredCoinsOrderPlacement;
@@ -32,6 +30,8 @@ public class TransactionService {
     @Autowired
     private AssetMapper assetMapper;
     @Autowired
+    private TransferMapper transferMapper;
+    @Autowired
     private BlockchainService blockchainService;
 
     public Page<Transaction> getTxList(Integer height, Integer pageNo, Integer pageSize) {
@@ -39,9 +39,9 @@ public class TransactionService {
 
     }
 
-    public Page<Transaction> getTxListByAccount(long accountId, Integer pageNo, Integer pageSize) {
-        Page<Transaction> list = transactionDao.getTxListByAccount(accountId, new RowBounds(pageNo, pageSize));
-        for (Transaction t : list) {
+    public Page<Transfer> getTxListByAccount(String address, Integer pageNo, Integer pageSize) {
+        Page<Transfer> list = transactionDao.getTxListByAccount(address, new RowBounds(pageNo, pageSize));
+        for (Transfer t : list) {
             //批量转账，只显示和当前用户相关的转账数量
             //TODO
            /* if (t.getType() == 0 && t.getSubType() == 1) {
@@ -141,5 +141,9 @@ public class TransactionService {
 
     public int countTxByHash(String hash) {
         return transactionDao.countTxByHash(hash);
+    }
+
+    public void addTransfer(Transfer t) {
+        transferMapper.insert(t);
     }
 }

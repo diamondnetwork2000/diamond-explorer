@@ -81,15 +81,16 @@ CREATE TABLE `t_asset` (
 DROP TABLE IF EXISTS `t_transfer`;
 CREATE TABLE `t_transfer` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `type` bigint(20) NOT NULL COMMENT '1: 发行token 2: 转移token 3: 创建市场 4： DEX订单',
+  `type` tinyint(2) NOT NULL COMMENT '1: 发行token 2: 转移token 3: 创建市场 4： DEX订单',
   `height` bigint(20) NOT NULL COMMENT '区块高度',
   `tx_hash` varchar(64) NOT NULL COMMENT '交易哈希',
   `sender` varchar(64) NOT NULL COMMENT '交易发送者',
-  `recipient` varchar(64) NOT NULL COMMENT '交易接受者，在发币交易中，接收者就是发币者',
+  `recipient` varchar(64) NOT NULL COMMENT '交易接受者，在发币交易中，接收者就是发币者, 在市场交易中，没有接收者',
   `amount` bigint(20) NOT NULL COMMENT '数量',
   `token` varchar(64) NOT NULL COMMENT '发送的代币名称',
   `created_at` datetime NOT NULL COMMENT '交易时间',
   PRIMARY KEY (`id`),
   KEY `ix_hash` (`tx_hash`),
-  KEY `ix_height` (`height`)
+  KEY `ix_sender` (`sender`),
+  KEY `ix_recipient` (`recipient`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

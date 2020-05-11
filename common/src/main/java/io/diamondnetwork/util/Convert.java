@@ -2,12 +2,21 @@ package io.diamondnetwork.util;
 
 import burst.kit.crypto.BurstCrypto;
 import burst.kit.entity.BurstAddress;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Security;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.Date;
 
 public final class Convert {
@@ -214,6 +223,143 @@ public final class Convert {
       throw new ArithmeticException("Integer overflow");
     }
     return Math.abs(a);
+  }
+
+  /**
+   * 字符串转换为16进制字符串
+   *
+   * @param s
+   * @return
+   */
+  public static String stringToHexString(String s) {
+    String str = "";
+    for (int i = 0; i < s.length(); i++) {
+      int ch = s.charAt(i);
+      String s4 = Integer.toHexString(ch);
+      str = str + s4;
+    }
+    return str;
+  }
+
+  /**
+   * 16进制字符串转换为字符串
+   *
+   * @param s
+   * @return
+   */
+  public static String hexStringToString(String s) {
+    if (s == null || s.equals("")) {
+      return null;
+    }
+    s = s.replace(" ", "");
+    byte[] baKeyword = new byte[s.length() / 2];
+    for (int i = 0; i < baKeyword.length; i++) {
+      try {
+        baKeyword[i] = (byte) (0xff & Integer.parseInt(
+                s.substring(i * 2, i * 2 + 2), 16));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    try {
+      s = new String(baKeyword, "gbk");
+      new String();
+    } catch (Exception e1) {
+      e1.printStackTrace();
+    }
+    return s;
+  }
+
+  /**
+   * 16进制表示的字符串转换为字节数组
+   *
+   * @param s 16进制表示的字符串
+   * @return byte[] 字节数组
+   */
+  public static byte[] hexStringToByteArray(String s) {
+    int len = s.length();
+    byte[] b = new byte[len / 2];
+    for (int i = 0; i < len; i += 2) {
+      // 两位一组，表示一个字节,把这样表示的16进制字符串，还原成一个字节
+      b[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character
+              .digit(s.charAt(i + 1), 16));
+    }
+    return b;
+  }
+
+  /**
+   * byte数组转16进制字符串
+   * @param bArray
+   * @return
+   */
+  public static final String bytesToHexString(byte[] bArray) {
+    StringBuffer sb = new StringBuffer(bArray.length);
+    String sTemp;
+    for (int i = 0; i < bArray.length; i++) {
+      sTemp = Integer.toHexString(0xFF & bArray[i]);
+      if (sTemp.length() < 2)
+        sb.append(0);
+      sb.append(sTemp.toUpperCase());
+    }
+    return sb.toString();
+  }
+
+  private static byte[] encodeRipeMD160(byte[] data) throws Exception {
+    //加入BouncyCastleProvider的支持
+    Security.addProvider(new BouncyCastleProvider());
+    //初始化MessageDigest
+    MessageDigest md = MessageDigest.getInstance("RipeMD160");
+    //执行消息摘要
+    return md.digest(data);
+  }
+
+  public static String encodeRipeMD160Hex(byte[] data) throws Exception {
+    //执行消息摘要
+    byte[] b = encodeRipeMD160(SHA256(data));
+    //做十六进制的编码处理
+    return new String(Hex.encode(b));
+  }
+
+  public static byte[] SHA256(byte[] src) throws NoSuchAlgorithmException {
+
+    MessageDigest md = MessageDigest.getInstance("SHA-256");
+    md.update(src);
+    return md.digest(); // to HexString
+
+  }
+
+  //参考 https://github.com/bitcoinjs/bech32/blob/master/index.js
+  public static byte[] convert(byte[] data, int inBits, int outBits, boolean pad) {
+    int value = 0;
+    int bits = 0;
+    int maxV = (1 << outBits) - 1;
+
+    byte[] result = new byte[100];
+    int index = 0;
+    for (int i = 0; i < data.length; ++i) {
+      value = (value << inBits) | data[i];
+      bits += inBits;
+
+      while (bits >= outBits) {
+        bits -= outBits;
+        result[index++] = (byte) ((value >> bits) & maxV);
+      }
+    }
+
+    if (pad) {
+      if (bits > 0) {
+        result[index++] = (byte) ((value << (outBits - bits)) & maxV);
+      }
+    } else {
+      if (bits >= inBits) {
+        return "Excess padding".getBytes();
+      }
+      if (((value << (outBits - bits)) & maxV) > 0) {
+        return "Non-zero padding".getBytes();
+      }
+    }
+
+    return result;
   }
 
 }

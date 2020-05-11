@@ -5,6 +5,7 @@ import io.diamondnetwork.service.BlockchainService;
 import io.diamondnetwork.task.response.BlockDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -23,51 +24,57 @@ public class BlockSync {
     @Autowired
     private BlockchainService blockchainService;
 
+    @Value(value = "${diamond.node.sync}")
+    private boolean sync;
+
     @PostConstruct
     public void init() {
+        if (sync) {
+            Thread blockSyncThread = new Thread() {
 
-        Thread blockSyncThread = new Thread() {
-
-            @Override
-            public void run() {
-                this.setName("blockSyncThread");
-                syncBlock();
-            }
-        };
-        blockSyncThread.start();
-
-
-
-        Thread latestBlockSyncThread = new Thread() {
-
-            @Override
-            public void run() {
-                this.setName("latestBlockSyncThread");
-                syncLatestBlock();
-            }
-        };
-        latestBlockSyncThread.start();
-
-        Thread txSyncThread = new Thread() {
-
-            @Override
-            public void run() {
-                this.setName("txSyncThread");
-                syncTransfer();
-            }
-        };
-        txSyncThread.start();
+                @Override
+                public void run() {
+                    this.setName("blockSyncThread");
+                    syncBlock();
+                }
+            };
+            blockSyncThread.start();
 
 
-        Thread tokenSyncThread = new Thread() {
 
-            @Override
-            public void run() {
-                this.setName("tokenSyncThread");
-                syncToken();
-            }
-        };
-        tokenSyncThread.start();
+            Thread latestBlockSyncThread = new Thread() {
+
+                @Override
+                public void run() {
+                    this.setName("latestBlockSyncThread");
+                    syncLatestBlock();
+                }
+            };
+            latestBlockSyncThread.start();
+
+            Thread txSyncThread = new Thread() {
+
+                @Override
+                public void run() {
+                    this.setName("txSyncThread");
+                    syncTransfer();
+                }
+            };
+            txSyncThread.start();
+
+
+            Thread tokenSyncThread = new Thread() {
+
+                @Override
+                public void run() {
+                    this.setName("tokenSyncThread");
+                    syncToken();
+                }
+            };
+            tokenSyncThread.start();
+        }
+
+
     }
 
     private void syncBlock() {

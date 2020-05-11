@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import io.diamondnetwork.CommonListResponse;
 import io.diamondnetwork.CommonResponse;
 import io.diamondnetwork.model.Transaction;
+import io.diamondnetwork.model.Transfer;
 import io.diamondnetwork.service.TransactionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,11 +56,11 @@ public class TransactionController {
 
     @ApiOperation(value = "某个账号的交易列表")
     @GetMapping("account")
-    public CommonListResponse<Transaction> getBlockListByAccount(@ApiParam(value = "开始高度") @RequestParam( required = true) String accountId,
-                                                  @ApiParam(value = "页数") @RequestParam Integer pageNo,
-                                                  @ApiParam(value = "页码") @RequestParam Integer pageSize) {
+    public CommonListResponse<Transfer> getBlockListByAccount(@ApiParam(value = "账号地址") @RequestParam( required = true) String address,
+                                                              @ApiParam(value = "页数") @RequestParam Integer pageNo,
+                                                              @ApiParam(value = "页码") @RequestParam Integer pageSize) {
 
-        Page<Transaction> voList = transactionService.getTxListByAccount(0L, pageNo, pageSize);
+        Page<Transfer> voList = transactionService.getTxListByAccount(address, pageNo, pageSize);
         return CommonListResponse.fromPage(voList);
     }
 

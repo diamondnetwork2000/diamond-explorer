@@ -47,7 +47,7 @@ public class AccountController {
 
     @ApiOperation(value = "账号持有的资产")
     @GetMapping("assets")
-    public CommonListResponse<Account> accountAssets(
+    public CommonListResponse<AccountAsset> accountAssets(
            @RequestParam String address,
            @RequestParam Integer pageNo,
                                                    @RequestParam Integer pageSize) throws IOException {

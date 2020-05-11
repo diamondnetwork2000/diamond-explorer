@@ -6,15 +6,10 @@ import io.diamondnetwork.mapper.AssetMapper;
 import io.diamondnetwork.mapper.BlockMapper;
 import io.diamondnetwork.model.AccountAsset;
 import io.diamondnetwork.model.Asset;
-import io.diamondnetwork.model.AssetTransfer;
+import io.diamondnetwork.model.Transfer;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class AssetService {
@@ -43,16 +38,11 @@ public class AssetService {
     public Page<AccountAsset>  getAccountAssets(String assetName,
                                                 Integer pageNo, Integer pageSize) {
 
-
-        return null;
+        Page<AccountAsset> list = assetDao.getAccountAssets(assetName, new RowBounds(pageNo, pageSize));
+        return list;
     }
 
-    public Page<AssetTransfer>  getAssetTransfer(String assetName,
-                                                 Integer pageNo, Integer pageSize) {
 
-
-        return null;
-    }
 
 
     public void addAsset(Asset asset) {
@@ -61,5 +51,10 @@ public class AssetService {
 
     public int countAssets(String symbol) {
         return assetDao.countAssets(symbol);
+    }
+
+    public Page<Transfer> getAssetTransfer(String assetName, Integer pageNo, Integer pageSize) {
+
+        return assetDao.getAssetTransfer(assetName, new RowBounds(pageNo, pageSize));
     }
 }
