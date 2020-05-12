@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class DateUtil {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -42,10 +43,31 @@ public class DateUtil {
     }
 
     public static Date getBlockTime(String timestamp) {
-        return cn.hutool.core.date.DateUtil.parse(timestamp, "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS'Z'");
+        //秒后面的数字会导致解析的时间比当前还大
+        timestamp = timestamp.substring(0, timestamp.lastIndexOf(".")) ;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        try {
+            return sdf.parse(timestamp);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static Date getTxTime(String timestamp) {
-        return cn.hutool.core.date.DateUtil.parse(timestamp, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        try {
+            return sdf.parse(timestamp);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

@@ -33,4 +33,7 @@ public interface DkdChainRpcApi {
 
     @GET("bank/balances/{address}")
     Call<AccountBalancesResponse> accountBalances(@Path("address") String address);
+
+    @GET("staking/validators")
+    Call<ValidatorsResponse> validators();
 }

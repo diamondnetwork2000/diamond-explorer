@@ -23,7 +23,7 @@ CREATE TABLE `t_block` (
   `fee` bigint(11) NOT NULL COMMENT '手续费',
   `version` int(11) NOT NULL COMMENT '版本号',
   `size` int(11) NOT NULL COMMENT '区块大小',
-  `created_by` varchar(64) NOT NULL COMMENT '出块人哈希',
+  `proposer_address` varchar(64) NOT NULL COMMENT '出块人哈希',
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_hash` (`hash`),
   UNIQUE KEY `ix_height` (`height`)
@@ -93,4 +93,18 @@ CREATE TABLE `t_transfer` (
   KEY `ix_hash` (`tx_hash`),
   KEY `ix_sender` (`sender`),
   KEY `ix_recipient` (`recipient`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `t_validator`;
+CREATE TABLE `t_validator` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `operator_address` varchar(128) NOT NULL COMMENT '运营商地址',
+  `address` varchar(64) NOT NULL COMMENT '验证人地址',
+  `consensus_pubkey` varchar(256) NOT NULL COMMENT '验证节点公钥',
+  `proposer_address` varchar(64) NOT NULL COMMENT '验证节点地址，就是每个block的proposer_address',
+  `moniker` varchar(64) NOT NULL COMMENT '验证节点名称',
+  `status` tinyint(2) NOT NULL COMMENT '2 正常',
+  `created_at` datetime NOT NULL COMMENT '交易时间',
+  PRIMARY KEY (`id`),
+  KEY `ix_hash` (`proposer_address`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -110,4 +110,14 @@ public class BlockchainService {
         }
         return response.body();
     }
+
+    public ValidatorsResponse validators() throws IOException {
+        Call<ValidatorsResponse> call = api.validators();
+        Response<ValidatorsResponse> response = call.execute();
+        if (response.code() != 200) {
+            log.error("failed to get validators ,response: {}", response.toString());
+            throw new RuntimeException();
+        }
+        return response.body();
+    }
 }

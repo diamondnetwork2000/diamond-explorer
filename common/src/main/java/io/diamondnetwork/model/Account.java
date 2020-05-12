@@ -31,7 +31,7 @@ public class Account {
     //内置货币的余额
     @TableField(exist = false)
     private long balance;
-    
+
     @TableField(exist = false)
     private byte[] publicKey;
 

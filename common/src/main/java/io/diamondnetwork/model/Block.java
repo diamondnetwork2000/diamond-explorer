@@ -33,9 +33,8 @@ public class Block {
     private long sent;
     @ApiModelProperty("交易数量（次数）")
     private int txNum;
-    @ApiModelProperty("挖矿账号")
-    @TableField(value = "created_by")
-    private String generator;
+    @ApiModelProperty("验证节点地址")
+    private String proposerAddress;
     @ApiModelProperty("挖矿账号")
     private long fee;
     @ApiModelProperty("版本号")
@@ -45,6 +44,10 @@ public class Block {
     @TableField(value = "hash")
     @ApiModelProperty("签名值")
     private String signature;
+    @TableField(exist = false)
+    private String generator;
+    @TableField(exist = false)
+    private String operatorAddress;
 
     public static Block from(BlockDetail body) {
         Block block = new Block();
@@ -53,10 +56,9 @@ public class Block {
         block.setCreatedAt(DateUtil.getBlockTime(body.getBlock_meta().getHeader().getTime()));
         block.setFee(0);
         block.setSent(0L).setReward(0L);
-        block.setGenerator(body.getBlock_meta().getHeader().getProposer_address());
+        block.setProposerAddress(body.getBlock_meta().getHeader().getProposer_address());
         block.setVersion(Integer.valueOf(body.getBlock_meta().getHeader().getVersion().getApp()));
         block.setSize(Integer.valueOf(body.getBlock_meta().getBlockSize()));
-        block.setGenerator(body.getBlock().getHeader().getProposer_address());
         block.setTxNum(Integer.valueOf(body.getBlock().getHeader().getNum_txs()));
 
         return block;

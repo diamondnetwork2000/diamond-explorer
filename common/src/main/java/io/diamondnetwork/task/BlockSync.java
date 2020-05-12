@@ -1,8 +1,11 @@
 package io.diamondnetwork.task;
 
 import io.diamondnetwork.mapper.ConfigMapper;
+import io.diamondnetwork.model.Validator;
+import io.diamondnetwork.service.AccountService;
 import io.diamondnetwork.service.BlockchainService;
 import io.diamondnetwork.task.response.BlockDetail;
+import io.diamondnetwork.task.response.ValidatorsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * 从区块链api同步区块和交易信息到本地数据库
@@ -19,6 +23,8 @@ import java.io.IOException;
 public class BlockSync {
     @Autowired
     private BlockchainSyncService syncService;
+    @Autowired
+    private AccountService accountService;
     @Autowired
     private ConfigMapper configMapper;
     @Autowired
@@ -39,7 +45,6 @@ public class BlockSync {
                 }
             };
             blockSyncThread.start();
-
 
 
             Thread latestBlockSyncThread = new Thread() {
@@ -104,11 +109,26 @@ public class BlockSync {
         BlockDetail b = null;
         try {
             b = blockchainService.latestBlock();
+            ValidatorsResponse validators = blockchainService.validators();
+            for (ValidatorsResponse.ResultBean resultBean : validators.getResult()) {
+                Validator validatorByProposerAddress = accountService.getValidatorByConsensusPubkey(resultBean.getConsensus_pubkey());
+                if (validatorByProposerAddress == null) {
+                    Validator v = new Validator(resultBean.getDescription().getMoniker(),
+                            resultBean.getConsensus_pubkey(),
+                            resultBean.getOperator_address());
+                    v.setStatus(resultBean.getStatus());
+                    v.setCreatedAt(new Date());
+                    accountService.addValidator(v);
+                }
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         int startHeight = b.getBlock_meta().getHeader().getHeight() - 1000;
+
+
 
         while (true) {
             try {

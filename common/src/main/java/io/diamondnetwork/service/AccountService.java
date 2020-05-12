@@ -3,8 +3,10 @@ package io.diamondnetwork.service;
 import com.github.pagehelper.Page;
 import io.diamondnetwork.mapper.AccountMapper;
 import io.diamondnetwork.mapper.TransactionMapper;
+import io.diamondnetwork.mapper.ValidatorMapper;
 import io.diamondnetwork.model.Account;
 import io.diamondnetwork.model.AccountAsset;
+import io.diamondnetwork.model.Validator;
 import io.diamondnetwork.task.response.AccountBalancesResponse;
 import io.diamondnetwork.task.response.ListTokenResponse;
 import io.diamondnetwork.util.Constants;
@@ -22,6 +24,9 @@ import java.util.stream.Collectors;
 public class AccountService {
     @Autowired
     private AccountMapper accountMapper;
+
+    @Autowired
+    private ValidatorMapper validatorMapper;
     @Autowired
     TransactionMapper transactionMapper;
     @Autowired
@@ -104,5 +109,19 @@ public class AccountService {
 
     public void addAccount(Account tx) {
         accountMapper.insert(tx);
+    }
+
+
+    public void addValidator(Validator tx) {
+        validatorMapper.insert(tx);
+    }
+
+
+    public Validator getValidatorByProposerAddress(String tx) {
+        return validatorMapper.getValidatorByProposerAddress(tx);
+    }
+
+    public Validator getValidatorByConsensusPubkey(String tx) {
+        return validatorMapper.getValidatorByConsensusPubkey(tx);
     }
 }

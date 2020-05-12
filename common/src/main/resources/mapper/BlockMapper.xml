@@ -3,20 +3,21 @@
 <mapper namespace="io.diamondnetwork.mapper.BlockMapper">
 
     <resultMap type="io.diamondnetwork.model.Block" id="block">
-        <result column="created_by" property="generator"/>
+
     </resultMap>
 
 
     <!--查询广告列表-->
     <select id="getBlockList" resultMap="block">
-        select * from t_block
+        select b.*,v.address as generator, v.operator_address from t_block b left join t_validator v
+        ON b.proposer_address = v.proposer_address
 
         where 1=1
         <if test="startHeight != null">
-            and height <![CDATA[ <= ]]> #{startHeight}
-            and height <![CDATA[ >= ]]>  #{endHeight}
+            and b.height <![CDATA[ <= ]]> #{startHeight}
+            and b.height <![CDATA[ >= ]]>  #{endHeight}
         </if>
-        ORDER BY height DESC
+        ORDER BY b.height DESC
     </select>
     <select id="getBlock" resultMap="block">
         select * from t_block where height = #{height}
