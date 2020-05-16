@@ -18,31 +18,22 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@ApiModel("区块")
+@ApiModel("block")
 @TableName(value = "t_block")
 public class Block {
     @TableId
     private int id;
-    @ApiModelProperty("高度")
+    @ApiModelProperty("height")
     private int height;
-    @ApiModelProperty("创建时间戳，该区块相对创世区块过去了多少秒")
     private Date createdAt;
-    @ApiModelProperty("挖矿奖励")
     private long reward;
-    @ApiModelProperty("发送数量")
     private long sent;
-    @ApiModelProperty("交易数量（次数）")
     private int txNum;
-    @ApiModelProperty("验证节点地址")
     private String proposerAddress;
-    @ApiModelProperty("挖矿账号")
     private long fee;
-    @ApiModelProperty("版本号")
     private int version;
-    @ApiModelProperty("区块大小")
     private int size;
     @TableField(value = "hash")
-    @ApiModelProperty("签名值")
     private String signature;
     @TableField(exist = false)
     private String generator;

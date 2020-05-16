@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@ApiModel("区块")
+@ApiModel("block status")
 public class BlockStatus {
     private int height;
 }

@@ -13,20 +13,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
-@Api(tags = "区块")
+@Api(tags = "dashboard")
 @RequestMapping("/dashboard")
 @RestController
 public class DashboardController {
     @Autowired
     private DashboardService dashboardService;
 
-    @ApiOperation(value = "网络统计")
+    @ApiOperation(value = "home page")
     @GetMapping("stats")
     public CommonResponse<BlockStats> getBlockStats() throws IOException {
         return new CommonResponse<>(dashboardService.getBlockStats());
     }
 
-    @ApiOperation(value = "区块详情")
+    @ApiOperation(value = "block status")
     @GetMapping("status")
     public CommonResponse<BlockStatus> getBlockStatus() {
         return new CommonResponse(dashboardService.getBlockStatus());

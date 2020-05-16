@@ -17,30 +17,30 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@ApiModel("区块")
+@ApiModel("ed25519")
 @TableName(value = "t_validator")
 public class Validator {
     private long id;
-    //运营商地址， 前缀是 “账户地址前缀” + “valoper” + 1 + 地址
+    //the prefix is “account prefix” + “valoper” + 1 + address
     private String operatorAddress;
     /**
-     *  验证人地址， 前缀是 “账户地址前缀”  + 1 + 地址
+     *  the prefix is “account prefix”  + 1 + address
      *
      */
     private String address;
     /**
-     * 验证节点的公钥
-     * dkdvalconspub1zcjduepqp25nn4nzz2fqksc2f20r5wc846lvjgcy9hctc8c9c2yeez5fr6gs78c3aj
+     *
+     * for example. dkdvalconspub1zcjduepqp25nn4nzz2fqksc2f20r5wc846lvjgcy9hctc8c9c2yeez5fr6gs78c3aj
      */
     private String consensusPubkey;
     /**
-     * 验证节点的地址
-     * consensusPubkey对应的25519地址
+     *
+     * the ed25519 address of consensusPubkey
      */
 
     private String proposerAddress;
     /**
-     * 验证人节点的名称
+     * node name
      */
 
     private String moniker;

@@ -18,9 +18,6 @@ public interface ConfigMapper {
     Config getConfigByName(@Param("name") String name);
 
     /**
-     * 获取记录，并且锁定该行记录
-     * 这个语句必须在事务中，否则抛出异常，因为没有任何意义
-     * @param name  属性名称
      * @return
      */
     @Transactional(propagation = Propagation.MANDATORY)

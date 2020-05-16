@@ -43,14 +43,14 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        // 从前台过来的数据转换成对应类型的转换器
+        // convert parameter to model
         registry.addConverter(new String2DateConverter());
     }
 
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 添加自定义的拦截器
+        // custom
        // registry.addInterceptor(getMyInterceptor()).addPathPatterns("/**");
     }
 

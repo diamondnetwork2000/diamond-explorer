@@ -17,24 +17,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
-@Api(tags = "区块")
+@Api(tags = "accounts")
 @RequestMapping("/accounts")
 @RestController
 public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @ApiOperation(value = "账号列表")
+    @ApiOperation(value = "list of account")
     @GetMapping("")
     public CommonListResponse<Account> getBlockList(
-                                                  @ApiParam(value = "页数") @RequestParam Integer pageNo,
-                                                  @ApiParam(value = "页码") @RequestParam Integer pageSize) {
-        //TODO: generator需要计算
+                                                  @ApiParam(value = "page number") @RequestParam Integer pageNo,
+                                                  @ApiParam(value = "record number of each page") @RequestParam Integer pageSize) {
         Page<Account> voList = accountService.getBlockList(pageNo, pageSize);
         return CommonListResponse.fromPage(voList);
     }
 
-    @ApiOperation(value = "账号详情")
+    @ApiOperation(value = "detail of account")
     @GetMapping("detail")
     public CommonResponse<Account> getBlockList(@RequestParam String address
                                        ) throws IOException {
@@ -45,7 +44,7 @@ public class AccountController {
     }
 
 
-    @ApiOperation(value = "账号持有的资产")
+    @ApiOperation(value = "assets of account")
     @GetMapping("assets")
     public CommonListResponse<AccountAsset> accountAssets(
            @RequestParam String address,

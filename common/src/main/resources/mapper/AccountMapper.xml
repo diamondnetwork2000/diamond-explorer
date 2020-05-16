@@ -11,7 +11,7 @@
 
 
 
-    <!--查询广告列表-->
+
     <select id="getAccountList" resultMap="account">
         select * from t_account
 

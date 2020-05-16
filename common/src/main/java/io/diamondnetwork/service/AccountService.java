@@ -80,7 +80,6 @@ public class AccountService {
     public Account getAccount(String address) throws IOException {
         Account account = accountMapper.getAccount(address);
         if (account != null && account.getId() == 0) {
-            //底下 join 查询语句里用了count，所以当account不存在时会返回一行空的内容
             return null;
         }
 

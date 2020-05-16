@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@ApiModel("转账记录")
+@ApiModel("transfer record")
 @TableName(value = "t_transfer")
 public class Transfer {
     @TableId

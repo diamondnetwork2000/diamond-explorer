@@ -17,7 +17,6 @@ public interface TransferMapper extends BaseMapper<Transfer> {
     /**
      *
      * @param txHash 交易hash
-     * @return 该笔交易里包含的转账记录
      */
     List<Transfer> getTx(@Param("txHash") String txHash);
 

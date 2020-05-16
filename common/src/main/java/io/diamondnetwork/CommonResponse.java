@@ -9,10 +9,10 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(chain = true)
 public class CommonResponse<T> {
-    protected int statusCode; //0为正常，其他为错误
-    protected String errorMessage;// 错误描述，当statusCode不是0时不为空
-    protected T content; //业务相关内容
-    protected Long timestamp; //服务器时间, unix 时间戳
+    protected int statusCode; //0: ok
+    protected String errorMessage;
+    protected T content;
+    protected Long timestamp; // unixstamp
 
 
     public CommonResponse(int statusCode){

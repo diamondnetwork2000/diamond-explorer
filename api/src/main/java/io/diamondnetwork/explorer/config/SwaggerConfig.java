@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Swagger2 配置类
  * Created by jerry on 2017/7/25.
  */
 @Profile({"dev", "test"})
@@ -25,40 +24,28 @@ import java.util.List;
 public class SwaggerConfig {
 
     /**
-     * 文档初始化
      * @return Docket
      */
     @Bean
     public Docket docket(){
         return new Docket(DocumentationType.SWAGGER_2)
-                .globalOperationParameters(operationParameters())
                 .useDefaultResponseMessages(false)
                 .apiInfo(buildApiInf())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.cmd.exchange"))
+                .apis(RequestHandlerSelectors.basePackage("io.diamondnetwork.explorer"))
                 .paths(PathSelectors.any())
                 .build();
     }
 
     private ApiInfo buildApiInf(){
         return new ApiInfoBuilder()
-                .title("Exchange API Docs")
-                .description("Exchange API Docs")
+                .title("Explorer API Docs")
+                .description("Explorer API Docs")
                 .contact(new Contact("cmd", "NONE", "NONE"))
                 .version("1.0")
                 .build();
     }
 
-    private List<Parameter> operationParameters() {
-        List<Parameter> list = new ArrayList<>();
-        list.add(new ParameterBuilder()
-                .name("token")
-                .description("token")
-                .parameterType("header")
-                .required(true)
-                .modelRef(new ModelRef("string"))
-                .build());
-        return list;
-    }
+
 
 }

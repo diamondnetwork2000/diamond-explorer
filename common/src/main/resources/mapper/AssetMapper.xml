@@ -14,7 +14,6 @@
     <resultMap type="io.diamondnetwork.model.AccountAsset" id="aa">
     </resultMap>
 
-    <!--查询广告列表-->
     <select id="getAssetList" resultMap="asset">
         select * from t_asset
     </select>

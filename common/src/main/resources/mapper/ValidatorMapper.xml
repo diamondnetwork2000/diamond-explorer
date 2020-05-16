@@ -4,7 +4,6 @@
 
 
 
-    <!--查询广告列表-->
     <select id="getValidatorByProposerAddress" resultType="io.diamondnetwork.model.Validator">
         select * from t_validator
         where proposer_address = #{proposerAddress}

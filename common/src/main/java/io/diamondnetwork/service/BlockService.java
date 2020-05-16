@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 public class BlockService {
     @Autowired
     private BlockMapper blockDao;
-    //查询区块高度小于或等于startHeight的区块列表
     public Page<Block> getBlockList(int startHeight, Integer pageNo, Integer pageSize) {
         int endHeight = startHeight - (pageNo +1) * pageSize;
         Page<Block> list = blockDao.getBlockList(startHeight,endHeight, new RowBounds(pageNo, pageSize));

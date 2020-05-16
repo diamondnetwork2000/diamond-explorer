@@ -12,20 +12,17 @@ import java.util.List;
 
 /**
  *
- * Created by linmingren on 2017/8/29.
+ * Created by diamondnetwork on 2017/8/29.
  */
 @Setter
 @Getter
 @NoArgsConstructor
 @Accessors(chain = true)
 public class CommonListResponse<T> extends CommonResponse {
-    @ApiModelProperty("当前页，若接口带分布，则有效")
     private Integer page;
 
-    @ApiModelProperty("分页数，若接口带分布，则有效")
     private Integer pageNum;
 
-    @ApiModelProperty("总数量")
     private Long total;
 
 
@@ -46,7 +43,6 @@ public class CommonListResponse<T> extends CommonResponse {
         ((List)this.content).addAll(itemList);
     }
 
-    //从MyBatis的分页结果中构造响应
     public static CommonListResponse fromPage(Page<?> content) {
         CommonListResponse r = new CommonListResponse();
         r.addAllItem(content);

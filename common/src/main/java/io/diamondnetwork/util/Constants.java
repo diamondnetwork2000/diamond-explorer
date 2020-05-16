@@ -98,7 +98,7 @@ public final class Constants {
                                                         is set as number of seconds before the current time. */
 
   public static final int EC_BLOCK_DISTANCE_LIMIT = 60;
-  public static final long ASSET_DECIMALS = 1000000l;
+  public static final long ASSET_DECIMALS = 1000000L;
   public static final int EC_CHANGE_BLOCK_1 = 0;
 
   public static final String RESPONSE = "response";
@@ -121,7 +121,7 @@ public final class Constants {
     calendar.set(Calendar.MINUTE, 0);
     calendar.set(Calendar.SECOND, 0);
     calendar.set(Calendar.MILLISECOND, 0);
-    GENESIS_TIME_STAMP = (int)(calendar.getTimeInMillis() / 1000l);
+    GENESIS_TIME_STAMP = (int)(calendar.getTimeInMillis() / 1000L);
   }
 
   public static final String nativeCoinName = "cet";

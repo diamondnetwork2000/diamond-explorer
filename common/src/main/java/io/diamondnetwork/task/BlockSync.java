@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
- * 从区块链api同步区块和交易信息到本地数据库
  */
 @Component
 @Slf4j
@@ -104,7 +103,6 @@ public class BlockSync {
         }
     }
 
-    //同步最后一部分区块
     private void syncLatestBlock() {
         BlockDetail b = null;
         try {
@@ -137,7 +135,6 @@ public class BlockSync {
                 if (height > 0) {
                     ++startHeight;
                 } else {
-                    //已经没有区块可以同步，休眠
                     Thread.sleep(1000L);
                 }
 
@@ -182,7 +179,6 @@ public class BlockSync {
                 int lastPage = Integer.valueOf(configMapper.getConfigByName("last_token_page").getConfValue());
                 int result = syncService.syncToken(lastPage, 20);
                 if (result > 0) {
-                    //只有处理处理后才能更新
                     configMapper.updateConfigValue("last_token_page", String.valueOf(++lastPage));
                     Thread.sleep(500L);
                 } else {

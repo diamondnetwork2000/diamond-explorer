@@ -9,7 +9,6 @@ import java.util.TimeZone;
 public class DateUtil {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     /**
-     * 获取日期字符串
      *
      * @param time
      *            Date
@@ -31,7 +30,6 @@ public class DateUtil {
     }
 
     public static int getDayBeginTimestamp(long timeMillis) {
-        // 计算当天0点的时间
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeMillis);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -43,7 +41,6 @@ public class DateUtil {
     }
 
     public static Date getBlockTime(String timestamp) {
-        //秒后面的数字会导致解析的时间比当前还大
         timestamp = timestamp.substring(0, timestamp.lastIndexOf(".")) ;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));

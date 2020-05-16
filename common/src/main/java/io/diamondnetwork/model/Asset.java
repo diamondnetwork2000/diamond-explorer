@@ -1,11 +1,9 @@
 package io.diamondnetwork.model;
 
-import burst.kit.crypto.BurstCrypto;
-import burst.kit.entity.BurstID;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.diamondnetwork.util.Constants;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@ApiModel("区块")
+@ApiModel("asset")
 @TableName(value = "t_asset")
 public class Asset {
     @TableId
@@ -31,10 +29,8 @@ public class Asset {
     private String issuer;
     private int decimals;
 
-    //和该资产相关的转账数量
     @TableField(exist = false)
     private int transferNum;
-    //持有该资产的用户数量
     @TableField(exist = false)
     private int holderNum;
 }

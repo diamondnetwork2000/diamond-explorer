@@ -226,7 +226,6 @@ public final class Convert {
   }
 
   /**
-   * 字符串转换为16进制字符串
    *
    * @param s
    * @return
@@ -242,7 +241,6 @@ public final class Convert {
   }
 
   /**
-   * 16进制字符串转换为字符串
    *
    * @param s
    * @return
@@ -270,12 +268,6 @@ public final class Convert {
     return s;
   }
 
-  /**
-   * 16进制表示的字符串转换为字节数组
-   *
-   * @param s 16进制表示的字符串
-   * @return byte[] 字节数组
-   */
   public static byte[] hexStringToByteArray(String s) {
     int len = s.length();
     byte[] b = new byte[len / 2];
@@ -288,7 +280,6 @@ public final class Convert {
   }
 
   /**
-   * byte数组转16进制字符串
    * @param bArray
    * @return
    */
@@ -305,18 +296,15 @@ public final class Convert {
   }
 
   private static byte[] encodeRipeMD160(byte[] data) throws Exception {
-    //加入BouncyCastleProvider的支持
     Security.addProvider(new BouncyCastleProvider());
-    //初始化MessageDigest
     MessageDigest md = MessageDigest.getInstance("RipeMD160");
-    //执行消息摘要
     return md.digest(data);
   }
 
   public static String encodeRipeMD160Hex(byte[] data) throws Exception {
-    //执行消息摘要
+
     byte[] b = encodeRipeMD160(SHA256(data));
-    //做十六进制的编码处理
+
     return new String(Hex.encode(b));
   }
 
@@ -328,7 +316,7 @@ public final class Convert {
 
   }
 
-  //参考 https://github.com/bitcoinjs/bech32/blob/master/index.js
+  //refer https://github.com/bitcoinjs/bech32/blob/master/index.js
   public static byte[] convert(byte[] data, int inBits, int outBits, boolean pad) {
     int value = 0;
     int bits = 0;

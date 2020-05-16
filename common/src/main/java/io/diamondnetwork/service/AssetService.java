@@ -20,7 +20,6 @@ public class AssetService {
 
     @Autowired
     private BlockMapper blockDao;
-    //查询区块高度小于或等于startHeight的区块列表
     public Page<Asset> getBlockList(Integer pageNo, Integer pageSize) {
         Page<Asset> list = assetDao.getAssetList(new RowBounds(pageNo, pageSize));
 

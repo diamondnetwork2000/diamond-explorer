@@ -1,7 +1,6 @@
 package io.diamondnetwork.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +14,7 @@ import java.math.RoundingMode;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@ApiModel("区块")
+@ApiModel("Account Asset")
 public class AccountAsset {
     private String address;
     private String assetName;

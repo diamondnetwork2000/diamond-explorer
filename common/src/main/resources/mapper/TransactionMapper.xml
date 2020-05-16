@@ -9,7 +9,6 @@
     </resultMap>
 
 
-    <!--查询广告列表-->
     <select id="getTxList" resultMap="tx">
         select * from t_transaction
         where 1 = 1

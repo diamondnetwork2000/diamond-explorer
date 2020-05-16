@@ -7,7 +7,6 @@
     </resultMap>
 
 
-    <!--查询广告列表-->
     <select id="getBlockList" resultMap="block">
         select b.*,v.address as generator, v.operator_address from t_block b left join t_validator v
         ON b.proposer_address = v.proposer_address

@@ -52,10 +52,6 @@ public class BlockchainSyncService {
     }
 
     /**
-     * 同步转账交易，转账交易包含了内置货币和代币的直接转账
-     * 1. 记录交易记录
-     * 2. 记录转账记录 （币种，金额，发送者，接收者，手续费）-- 一条交易可以对应多条转账（transfer）记录
-     * 3. 如果发送者或者接收者在数据库不存在，则添加
      * @param page
      * @param limit
      * @return
@@ -69,15 +65,12 @@ public class BlockchainSyncService {
                 Transaction tx = new Transaction();
                 tx.setHash(t.getTxhash());
                 tx.setHeight(Integer.valueOf(t.getHeight()));
-                //理论上可能有多个手续费，只处理
                 tx.setFee(Long.valueOf(t.getTx().getValue().getFee().getAmount().get(0).getAmount()));
 
 
-                //如果交易所属的区块还没有， 则先同步区块
                 if (blockService.getBlock(tx.getHeight()) == null) {
                     syncBlock(tx.getHeight());
                 } else {
-                    //增加所属区块的手续费
                     blockService.addFeeToHeight(tx.getHeight(), tx.getFee());
                 }
 
@@ -103,7 +96,6 @@ public class BlockchainSyncService {
                     transactionService.addTx(tx);
                 }
 
-                //检查目标地址，如果这个地址不存在account中，则新建一个账号
                 for (BankTxResponse.TxsBean.TxBean.ValueBeanX.MsgBean msgBean : t.getTx().getValue().getMsg()) {
                     if (msgBean.getType().equals("bankx/MsgSend")) {
                         if (accountService.countAccounts(msgBean.getValue().getTo_address()) == 0) {
@@ -114,7 +106,6 @@ public class BlockchainSyncService {
                         }
 
                         for (BankTxResponse.TxsBean.TxBean.ValueBeanX.MsgBean.ValueBean.AmountBeanX amountBeanX : msgBean.getValue().getAmount()) {
-                            //把发送者和接收者都记录转账记录
                             Transfer transfer = new Transfer();
                             transfer.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
                             transfer.setSender(msgBean.getValue().getFrom_address());
@@ -146,7 +137,6 @@ public class BlockchainSyncService {
     }
 
     /**
-     * 同步代币的发行记录，保存到资产表
      */
     @Transactional(rollbackFor = RuntimeException.class)
     public int syncToken(int page, int limit) throws IOException {
@@ -175,7 +165,6 @@ public class BlockchainSyncService {
                     transactionService.addTx(tx);
                 }
 
-                //检查目标地址，如果这个地址不存在account中，则新建一个账号
                 for (AssetTxResponse.TxsBean.TxBean.ValueBeanX.MsgBean msgBean : t.getTx().getValue().getMsg()) {
                     if (msgBean.getType().equals("asset/MsgIssueToken")) {
                         msgBean.getValue().getDescription();
@@ -194,7 +183,6 @@ public class BlockchainSyncService {
                         }
 
 
-                        //把发送者和接收者都记录转账记录
                         Transfer transfer = new Transfer();
                         transfer.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
                         transfer.setSender(msgBean.getValue().getOwner());
@@ -215,7 +203,6 @@ public class BlockchainSyncService {
     }
 
     /**
-     * 同步交易所交易，包括创建市场，订单
      */
     @Transactional(rollbackFor = RuntimeException.class)
     public int syncMarketOrder(int page, int limit) throws IOException {

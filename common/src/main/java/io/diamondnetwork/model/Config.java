@@ -14,10 +14,7 @@ import java.io.Serializable;
 public class Config implements Serializable {
     private static final long serialVersionUID = -1L;
     private long       id;
-    // 属性名
     private String      confName;
-    // 属性值
     private String      confValue;
-    // 属性备注信息
     private String      comment;
 }

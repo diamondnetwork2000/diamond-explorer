@@ -22,7 +22,6 @@ public class CommonResponseAdvice implements ResponseBodyAdvice<Object> {
                                   Class<? extends HttpMessageConverter<?>> aClass,
                                   ServerHttpRequest serverHttpRequest,
                                   ServerHttpResponse serverHttpResponse) {
-        // 设置值给后面使用，主要是拦截器使用
         if(serverHttpRequest instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest req = (ServletServerHttpRequest)serverHttpRequest;
             req.getServletRequest().setAttribute("ReturnResponseObj", o);
