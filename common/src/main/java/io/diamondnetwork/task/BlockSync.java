@@ -82,9 +82,10 @@ public class BlockSync {
     }
 
     private void syncBlock() {
+        int lastHeight = Integer.valueOf(configMapper.getConfigByName("last_block_height").getConfValue());
         while (true) {
             try {
-                int lastHeight = Integer.valueOf(configMapper.getConfigByName("last_block_height").getConfValue());
+
                 int result = syncService.syncBlock(lastHeight);
                 if (result > 0) {
                     configMapper.updateConfigValue("last_block_height", String.valueOf(++lastHeight));
@@ -98,7 +99,7 @@ public class BlockSync {
                 } catch (InterruptedException interruptedException) {
                     interruptedException.printStackTrace();
                 }
-                e.printStackTrace();
+                log.error("failed to sync block at: {}", lastHeight, e);
             }
         }
     }
@@ -144,7 +145,7 @@ public class BlockSync {
                 } catch (InterruptedException interruptedException) {
                     interruptedException.printStackTrace();
                 }
-                e.printStackTrace();
+                log.error("failed to sync block at: {}", startHeight, e);
             }
         }
     }

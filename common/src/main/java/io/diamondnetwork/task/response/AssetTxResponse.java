@@ -336,6 +336,15 @@ public class AssetTxResponse {
                         private String url;
                         private String description;
                         private String identity;
+                        private String original_owner;
+                        private String new_owner;
+                        private String owner_address;
+                        private String amount;
+
+
+
+
+
 
                         public String getName() {
                             return name;
@@ -423,6 +432,38 @@ public class AssetTxResponse {
 
                         public void setIdentity(String identity) {
                             this.identity = identity;
+                        }
+
+                        public String getOriginal_owner() {
+                            return original_owner;
+                        }
+
+                        public void setOriginal_owner(String original_owner) {
+                            this.original_owner = original_owner;
+                        }
+
+                        public String getNew_owner() {
+                            return new_owner;
+                        }
+
+                        public void setNew_owner(String new_owner) {
+                            this.new_owner = new_owner;
+                        }
+
+                        public String getOwner_address() {
+                            return owner_address;
+                        }
+
+                        public void setOwner_address(String owner_address) {
+                            this.owner_address = owner_address;
+                        }
+
+                        public String getAmount() {
+                            return amount;
+                        }
+
+                        public void setAmount(String amount) {
+                            this.amount = amount;
                         }
                     }
                 }

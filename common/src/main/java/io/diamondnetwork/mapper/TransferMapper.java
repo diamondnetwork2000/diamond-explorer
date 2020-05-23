@@ -11,14 +11,8 @@ import java.util.List;
 
 @Mapper
 public interface TransferMapper extends BaseMapper<Transfer> {
-    Page<Transfer> getTxList(@Param("height") Integer height, RowBounds pageRowBounds);
-    Page<Transfer> getTxListByAccount(@Param("accountId") String address, RowBounds pageRowBounds);
 
-    /**
-     *
-     * @param txHash 交易hash
-     */
-    List<Transfer> getTx(@Param("txHash") String txHash);
 
-    int getTxCountByAccount(@Param("accountId") long accountId);
+
+    List<Transfer> getTransfersByTxHash(@Param("txHash")  String hash);
 }

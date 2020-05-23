@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -28,14 +29,13 @@ public class Transaction {
     private String recipient;
     private String memo;
     private long fee;
-    //不是普通支付的交易会带有额外信息
-    @ApiModelProperty("0:普通支付， 2：发行资产")
-    private Attachment attachment;
+
     private Date createdAt;
     private int height;
     private int msgNum;
-    //查询详情时会返回区块的信息
     @TableField(exist = false)
     private Block block;
 
+    @TableField(exist = false)
+    private List<Transfer> transfers;
 }

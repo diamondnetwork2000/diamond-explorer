@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 @Service
 @Slf4j
@@ -110,14 +111,34 @@ public class BlockchainSyncService {
                             transfer.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
                             transfer.setSender(msgBean.getValue().getFrom_address());
                             transfer.setRecipient(msgBean.getValue().getTo_address());
-                            transfer.setToken(amountBeanX.getDenom()).setAmount(Long.valueOf(amountBeanX.getAmount()));
+                            transfer.setToken(amountBeanX.getDenom()).setAmount(new BigInteger(amountBeanX.getAmount()));
                             transactionService.addTransfer(transfer);
+                        }
+
+                        //adding bill record for sender and recipient
+                        for (BankTxResponse.TxsBean.TxBean.ValueBeanX.MsgBean.ValueBean.AmountBeanX amountBeanX : msgBean.getValue().getAmount()) {
+                            Bill b = new Bill();
+                            b.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
+                            b.setSender(msgBean.getValue().getFrom_address());
+                            b.setRecipient(msgBean.getValue().getTo_address());
+                            b.setToken(amountBeanX.getDenom())
+                                    .setChangeAmount(new BigInteger(amountBeanX.getAmount()).negate())
+                                    .setAccount(msgBean.getValue().getFrom_address());
+
+                            transactionService.addBill(b);
+
+                            b = new Bill();
+                            b.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
+                            b.setSender(msgBean.getValue().getFrom_address());
+                            b.setRecipient(msgBean.getValue().getTo_address());
+                            b.setToken(amountBeanX.getDenom())
+                                    .setChangeAmount(new BigInteger(amountBeanX.getAmount()))
+                                    .setAccount(msgBean.getValue().getTo_address());
+
+                            transactionService.addBill(b);
                         }
                     }
                 }
-
-
-
             }
 
             return response.getTxs().size();
@@ -149,7 +170,7 @@ public class BlockchainSyncService {
                 tx.setCreatedAt(DateUtil.getTxTime(t.getTimestamp()));
                 tx.setSuccess(t.getLogs().get(0).isSuccess());
                 tx.setMsgNum(t.getTx().getValue().getMsg().size());
-                tx.setType(TransactionType.ISSUE_TOKEN);
+
                 for (AssetTxResponse.TxsBean.EventsBeanX event : t.getEvents()) {
                     if (event.getType().equals("message")) {
                         for (AssetTxResponse.TxsBean.EventsBeanX.AttributesBeanX attribute : event.getAttributes()) {
@@ -157,56 +178,104 @@ public class BlockchainSyncService {
                                 tx.setSender(attribute.getValue());
                             }
                         }
-
                     }
                 }
+
                 tx.setMemo(t.getTx().getValue().getMemo());
                 if (transactionService.countTxByHash(tx.getHash()) == 0) {
-                    transactionService.addTx(tx);
-                }
 
-                for (AssetTxResponse.TxsBean.TxBean.ValueBeanX.MsgBean msgBean : t.getTx().getValue().getMsg()) {
-                    if (msgBean.getType().equals("asset/MsgIssueToken")) {
-                        msgBean.getValue().getDescription();
 
-                        Asset asset = new Asset();
-                        asset.setCreatedAt(tx.getCreatedAt());
-                        asset.setDecimals(0);
-                        asset.setDescription(msgBean.getValue().getDescription());
-                        asset.setName(msgBean.getValue().getSymbol());
-                        asset.setCreationHeight(tx.getHeight());
-                        asset.setTotalSupply(Long.valueOf(msgBean.getValue().getTotal_supply()));
-                        asset.setIssuer(msgBean.getValue().getOwner());
+                    for (AssetTxResponse.TxsBean.TxBean.ValueBeanX.MsgBean msgBean : t.getTx().getValue().getMsg()) {
+                        if (msgBean.getType().equals("asset/MsgIssueToken")) {
+                            msgBean.getValue().getDescription();
 
-                        if (assetService.countAssets(msgBean.getValue().getSymbol()) < 1) {
-                            assetService.addAsset(asset);
+                            Asset asset = new Asset();
+                            asset.setCreatedAt(tx.getCreatedAt());
+                            asset.setDecimals(8);
+                            asset.setDescription(msgBean.getValue().getDescription());
+                            asset.setName(msgBean.getValue().getSymbol());
+                            asset.setCreationHeight(tx.getHeight());
+                            asset.setTotalSupply(new BigInteger(msgBean.getValue().getTotal_supply()));
+                            asset.setIssuer(msgBean.getValue().getOwner());
+                            asset.setOwner(msgBean.getValue().getOwner());
+
+                            if (assetService.countAssets(msgBean.getValue().getSymbol()) < 1) {
+                                assetService.addAsset(asset);
+                            }
+
+                            tx.setType(TransactionType.ISSUE_TOKEN);
+                        } else if (msgBean.getType().equals("asset/MsgTransferOwnership")) {
+                            //values contains 3 fields, symbol, original_owner, new_owner
+                            assetService.updateAssetOwner(msgBean.getValue().getSymbol(), msgBean.getValue().getNew_owner());
+                            tx.setType(TransactionType.TRANSFER_OWNERSHIP);
+                        } else if (msgBean.getType().equals("asset/MsgMintToken")) {
+                            //values contains 3 fields, symbol, amount, owner_address
+                            assetService.mintAsset(msgBean.getValue().getSymbol(), new BigInteger(msgBean.getValue().getAmount()));
+                            tx.setType(TransactionType.MINT_TOKEN);
                         }
 
+                        //add transfer and billing records
+                        if (msgBean.getType().equals("asset/MsgIssueToken")) {
+                            Transfer transfer = new Transfer();
+                            transfer.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
+                            transfer.setSender(msgBean.getValue().getOwner());
+                            transfer.setRecipient(msgBean.getValue().getOwner());
+                            transfer.setToken(msgBean.getValue().getSymbol())
+                                    .setAmount(new BigInteger(msgBean.getValue().getTotal_supply()));
+                            transactionService.addTransfer(transfer);
 
-                        Transfer transfer = new Transfer();
-                        transfer.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
-                        transfer.setSender(msgBean.getValue().getOwner());
-                        transfer.setRecipient(msgBean.getValue().getOwner());
-                        transfer.setToken(msgBean.getValue().getSymbol())
-                                .setAmount(Long.valueOf(msgBean.getValue().getTotal_supply()));
-                        transactionService.addTransfer(transfer);
+                            //adding bill record for the token creator
+                            Bill b = new Bill();
+                            b.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
+                            b.setSender(msgBean.getValue().getOwner());
+                            b.setRecipient(msgBean.getValue().getOwner());
+                            b.setToken(msgBean.getValue().getSymbol())
+                                    .setChangeAmount(new BigInteger(msgBean.getValue().getTotal_supply()))
+                                    .setAccount(msgBean.getValue().getOwner());
+
+                            transactionService.addBill(b);
+                        }
+
+                        if (msgBean.getType().equals("asset/MsgTransferOwnership")) {
+                            Transfer transfer = new Transfer();
+                            transfer.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
+                            transfer.setSender(msgBean.getValue().getOriginal_owner());
+                            transfer.setRecipient(msgBean.getValue().getNew_owner());
+                            transfer.setToken(msgBean.getValue().getSymbol())
+                                    .setAmount(new BigInteger("0"));
+                            transactionService.addTransfer(transfer);
+                        }
+
+                        if (msgBean.getType().equals("asset/MsgMintToken")) {
+                            Transfer transfer = new Transfer();
+                            transfer.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
+                            transfer.setSender(msgBean.getValue().getOwner_address());
+                            transfer.setRecipient(msgBean.getValue().getOwner_address());
+                            transfer.setToken(msgBean.getValue().getSymbol())
+                                    .setAmount(new BigInteger(msgBean.getValue().getAmount()));
+                            transactionService.addTransfer(transfer);
+
+                            Bill b = new Bill();
+                            b.setCreatedAt(tx.getCreatedAt()).setHeight(tx.getHeight()).setTxHash(tx.getHash()).setType(tx.getType());
+                            b.setSender(msgBean.getValue().getOwner_address());
+                            b.setRecipient(msgBean.getValue().getOwner_address());
+                            b.setToken(msgBean.getValue().getSymbol())
+                                    .setChangeAmount(new BigInteger(msgBean.getValue().getAmount()))
+                                    .setAccount(msgBean.getValue().getOwner_address());
+
+                            transactionService.addBill(b);
+                        }
 
                     }
-                }
 
+                    transactionService.addTx(tx);
+                }
             }
 
             return response.getTxs().size();
         }
-
         return 0;
     }
 
-    /**
-     */
-    @Transactional(rollbackFor = RuntimeException.class)
-    public int syncMarketOrder(int page, int limit) throws IOException {
-        return -1;
-    }
 
 }

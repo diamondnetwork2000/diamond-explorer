@@ -67,8 +67,9 @@ CREATE TABLE `t_asset` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(16) NOT NULL ,
   `description` varchar(64) NOT NULL COMMENT 'description' ,
-  `total_supply` bigint(20) NOT NULL COMMENT 'total supply',
+  `total_supply` decimal(32,0) NOT NULL COMMENT 'total supply',
   `issuer` varchar(64) NOT NULL COMMENT 'the account who issue this token',
+  `owner` varchar(64) NOT NULL COMMENT 'the account who owns this token',
   `decimals` int(20) NOT NULL COMMENT 'decimals',
   `created_at` datetime NOT NULL COMMENT 'creation time',
   `creation_height` bigint(20) NOT NULL COMMENT 'creation block height',
@@ -86,7 +87,7 @@ CREATE TABLE `t_transfer` (
   `tx_hash` varchar(64) NOT NULL COMMENT 'transaction hash',
   `sender` varchar(64) NOT NULL COMMENT 'the account who sends the token',
   `recipient` varchar(64) NOT NULL COMMENT 'the account who receives the token',
-  `amount` bigint(20) NOT NULL COMMENT 'amount',
+  `amount` decimal(32,0) NOT NULL COMMENT 'amount',
   `token` varchar(64) NOT NULL COMMENT 'token symbol',
   `created_at` datetime NOT NULL COMMENT 'block creation time',
   PRIMARY KEY (`id`),
@@ -107,4 +108,21 @@ CREATE TABLE `t_validator` (
   `created_at` datetime NOT NULL COMMENT 'creation time',
   PRIMARY KEY (`id`),
   KEY `ix_hash` (`proposer_address`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `t_bill`;
+CREATE TABLE `t_bill` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `account` varchar(64) NOT NULL COMMENT 'the account who receives the token',
+  `change_amount` decimal(32,0)  NOT NULL COMMENT 'amount',
+  `token` varchar(64) NOT NULL COMMENT 'token symbol',
+  `type` tinyint(2) NOT NULL COMMENT '1 transfer 2: create order 3： cancel order 4 issue token 5 create market',
+  `height` bigint(20) NOT NULL COMMENT 'block height',
+  `tx_hash` varchar(64) NOT NULL COMMENT 'transaction hash',
+  `sender` varchar(64) NOT NULL COMMENT 'the account who sends the token',
+  `recipient` varchar(64) NOT NULL COMMENT 'the account who receives the token',
+  `created_at` datetime NOT NULL COMMENT 'block creation time',
+  PRIMARY KEY (`id`),
+  KEY `ix_hash` (`tx_hash`),
+  KEY `ix_account` (`account`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

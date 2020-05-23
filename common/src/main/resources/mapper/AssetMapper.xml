@@ -56,15 +56,27 @@
     </select>
 
     <select id="getAccountAssets" resultMap="aa">
-        select * from t_transfer
+        SELECT account as address ,sum(change_amount) as quantity FROM t_bill
         where token = #{assetName}
-        order by height DESC
+        group by account
+        order by quantity desc
+
     </select>
 
     <select id="countAssets" resultType="java.lang.Integer">
         select count(*) from t_asset
         where name = #{symbol}
     </select>
+
+
+    <select id="updateAssetOwner" >
+        update t_asset set owner = #{newOwner} where name = #{assetName}
+    </select>
+
+    <select id="mintAsset" >
+        update t_asset set total_supply = total_supply + #{amount} where name = #{assetName}
+    </select>
+
 
 
 

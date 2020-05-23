@@ -1,10 +1,7 @@
 package io.diamondnetwork.service;
 
 import com.github.pagehelper.Page;
-import io.diamondnetwork.mapper.AssetMapper;
-import io.diamondnetwork.mapper.BlockMapper;
-import io.diamondnetwork.mapper.TransactionMapper;
-import io.diamondnetwork.mapper.TransferMapper;
+import io.diamondnetwork.mapper.*;
 import io.diamondnetwork.model.*;
 import io.diamondnetwork.task.response.BlockDetail;
 import org.apache.ibatis.session.RowBounds;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class TransactionService {
@@ -27,6 +25,8 @@ public class TransactionService {
     private AssetMapper assetMapper;
     @Autowired
     private TransferMapper transferMapper;
+    @Autowired
+    private BillMapper billMapper;
     @Autowired
     private BlockchainService blockchainService;
 
@@ -60,6 +60,10 @@ public class TransactionService {
             tx.setBlock(b);
         }
 
+        //
+        List<Transfer> transfers = transferMapper.getTransfersByTxHash(tx.getHash());
+        tx.setTransfers(transfers);
+
 
 
         return tx;
@@ -76,5 +80,9 @@ public class TransactionService {
 
     public void addTransfer(Transfer t) {
         transferMapper.insert(t);
+    }
+
+    public void addBill(Bill t) {
+        billMapper.insert(t);
     }
 }

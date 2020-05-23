@@ -8,7 +8,9 @@ public enum  TransactionType implements IEnum<Integer> {
    CREATE_ORDER(2, "create order"),
    CANCEL_ORDER(3, "cancel order"),
    ISSUE_TOKEN(4, "issue token"),
-   CREATE_MARKET(5, "create market");
+   CREATE_MARKET(5, "create market"),
+   TRANSFER_OWNERSHIP(6, "transfer ownership to new address"),
+   MINT_TOKEN(7, "mint token");
 
    int type;
    String desc;

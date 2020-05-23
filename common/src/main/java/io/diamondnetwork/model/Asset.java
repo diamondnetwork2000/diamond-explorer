@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 @Data
@@ -25,8 +26,9 @@ public class Asset {
     private String description;
     private long creationHeight;
     private Date createdAt;
-    private long totalSupply;
+    private BigInteger totalSupply;
     private String issuer;
+    private String owner;
     private int decimals;
 
     @TableField(exist = false)

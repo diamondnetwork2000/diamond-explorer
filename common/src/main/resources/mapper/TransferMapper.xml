@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.diamondnetwork.mapper.TransferMapper">
+
+    <resultMap type="io.diamondnetwork.model.Transfer" id="t">
+    </resultMap>
+
+
+    <select id="getTransfersByTxHash" resultMap="t">
+        select * from t_transfer where tx_hash = #{txHash}
+    </select>
+
+
+</mapper>

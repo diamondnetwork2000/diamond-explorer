@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,7 @@ public class AccountService {
         Page<AccountAsset> assets = new Page<>();
         if (accountBalancesResponse.getResult().getCoins() != null) {
             accountBalancesResponse.getResult().getCoins().forEach( m ->
-                            assets.add(new AccountAsset(address, m.getDenom(), Long.valueOf(m.getAmount())))
+                            assets.add(new AccountAsset(address, m.getDenom(), new BigInteger(m.getAmount())))
                     );
         }
 
@@ -57,7 +59,7 @@ public class AccountService {
 
         if (accountBalancesResponse.getResult().getFrozen_coins() != null) {
             accountBalancesResponse.getResult().getFrozen_coins().forEach( m ->
-                    assetName2AssetMap.get(m.getDenom()).setFrozenQuantity(Long.valueOf(m.getAmount()))
+                    assetName2AssetMap.get(m.getDenom()).setFrozenQuantity(new BigInteger(m.getAmount()))
             );
         }
 
@@ -66,7 +68,7 @@ public class AccountService {
             listTokenResponse.getResult().forEach(m -> {
                         AccountAsset a = assetName2AssetMap.get(m.getValue().getSymbol());
                         if (a != null) {
-                            a.setTotalSupply(Long.valueOf(m.getValue().getTotal_supply()));
+                            a.setTotalSupply(new BigInteger(m.getValue().getTotal_supply()));
                         }
 
 

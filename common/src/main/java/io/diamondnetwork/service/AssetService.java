@@ -11,6 +11,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+
 @Service
 public class AssetService {
     @Autowired
@@ -55,5 +57,13 @@ public class AssetService {
     public Page<Transfer> getAssetTransfer(String assetName, Integer pageNo, Integer pageSize) {
 
         return assetDao.getAssetTransfer(assetName, new RowBounds(pageNo, pageSize));
+    }
+
+    public void updateAssetOwner(String symbol, String new_owner) {
+        assetDao.updateAssetOwner(symbol, new_owner);
+    }
+
+    public void mintAsset(String symbol, BigInteger amount) {
+        assetDao.mintAsset(symbol, amount);
     }
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 @Data
@@ -18,23 +19,28 @@ import java.math.RoundingMode;
 public class AccountAsset {
     private String address;
     private String assetName;
-    private long quantity;
-    private long frozenQuantity;
+    private BigInteger quantity;
+    private BigInteger frozenQuantity = BigInteger.ZERO;
     private int height;
-    private long totalSupply;
+    private BigInteger totalSupply;
 
-    public AccountAsset(String address, String assetName,Long quantity) {
+    public AccountAsset(String address, String assetName,BigInteger quantity) {
         this.address = address;
         this.assetName = assetName;
         this.quantity = quantity;
+
+
     }
 
+
     public BigDecimal getShare() {
-        if (totalSupply == 0) {
+        if (totalSupply.compareTo(BigInteger.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
 
-        return BigDecimal.valueOf(quantity).add(BigDecimal.valueOf(frozenQuantity))
-                .divide(BigDecimal.valueOf(totalSupply), 4, RoundingMode.HALF_UP);
+
+
+        return new BigDecimal(quantity).add(new BigDecimal(frozenQuantity))
+                .divide(new BigDecimal(totalSupply), 4, RoundingMode.HALF_UP);
     }
 }
