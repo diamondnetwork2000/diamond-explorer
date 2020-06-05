@@ -10,7 +10,9 @@ public enum  TransactionType implements IEnum<Integer> {
    ISSUE_TOKEN(4, "issue token"),
    CREATE_MARKET(5, "create market"),
    TRANSFER_OWNERSHIP(6, "transfer ownership to new address"),
-   MINT_TOKEN(7, "mint token");
+   MINT_TOKEN(7, "mint token"),
+   CANCEL_MARKET(8, "cancel market"),
+   MODIFY_MARKET_PRICE(9, "modify market price precision");
 
    int type;
    String desc;

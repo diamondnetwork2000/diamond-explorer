@@ -126,3 +126,37 @@ CREATE TABLE `t_bill` (
   KEY `ix_hash` (`tx_hash`),
   KEY `ix_account` (`account`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `t_order`;
+CREATE TABLE `t_order` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `sender` varchar(64) NOT NULL COMMENT 'the account who create the order',
+  `price` decimal(32,0)  NOT NULL COMMENT 'price',
+  `quantity` decimal(32,0)  NOT NULL COMMENT 'quantity',
+  `trading_pair` varchar(64) NOT NULL COMMENT 'market',
+  `type` tinyint(2) NOT NULL COMMENT '1 transfer 2: create order 3： cancel order 4 issue token 5 create market',
+  `price_precision` int(2) NOT NULL COMMENT '1 transfer 2: create order 3： cancel order 4 issue token 5 create market',
+  `side` tinyint(2) NOT NULL COMMENT '1 buy 2: sell',
+  `height` bigint(20) NOT NULL COMMENT 'block height',
+  `tx_hash` varchar(64) NOT NULL COMMENT 'transaction hash',
+  `created_at` datetime NOT NULL COMMENT 'block creation time',
+  PRIMARY KEY (`id`),
+  KEY `ix_hash` (`tx_hash`),
+  KEY `ix_sender` (`sender`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+DROP TABLE IF EXISTS `t_message`;
+CREATE TABLE `t_message` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `sender` varchar(64) NOT NULL COMMENT 'the account who create the order',
+  `json_content` varchar(512) NOT NULL COMMENT 'the detailed content',
+  `type` tinyint(2) NOT NULL COMMENT '1 transfer 2: create order 3： cancel order 4 issue token 5 create market',
+  `height` bigint(20) NOT NULL COMMENT 'block height',
+  `tx_hash` varchar(64) NOT NULL COMMENT 'transaction hash',
+  `created_at` datetime NOT NULL COMMENT 'block creation time',
+  PRIMARY KEY (`id`),
+  KEY `ix_hash` (`tx_hash`),
+  KEY `ix_sender` (`sender`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

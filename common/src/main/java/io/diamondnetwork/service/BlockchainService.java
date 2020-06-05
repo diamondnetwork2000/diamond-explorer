@@ -79,15 +79,15 @@ public class BlockchainService {
         return body;
     }
 
-    public OrderTxResponse searchMarketTxs(String module, int page, int limit) throws IOException {
-        Call<OrderTxResponse> call = api.searchMarketTxs(module, page, limit);
-        Response<OrderTxResponse> response = call.execute();
+    public TxsResponse searchMarketTxs(String module, int page, int limit) throws IOException {
+        Call<TxsResponse> call = api.searchMarketTxs(module, page, limit);
+        Response<TxsResponse> response = call.execute();
         if (response.code() != 200) {
             log.error("failed to search tx for module: {}, page: {}, response: {}", module, page, response.toString());
             return null;
         }
 
-        OrderTxResponse body = response.body();
+        TxsResponse body = response.body();
         return body;
     }
 
@@ -114,6 +114,16 @@ public class BlockchainService {
     public ValidatorsResponse validators() throws IOException {
         Call<ValidatorsResponse> call = api.validators();
         Response<ValidatorsResponse> response = call.execute();
+        if (response.code() != 200) {
+            log.error("failed to get validators ,response: {}", response.toString());
+            throw new RuntimeException();
+        }
+        return response.body();
+    }
+
+    public TokenDetailResponse tokenDetail(String token) throws IOException {
+        Call<TokenDetailResponse> call = api.tokenDetail(token);
+        Response<TokenDetailResponse> response = call.execute();
         if (response.code() != 200) {
             log.error("failed to get validators ,response: {}", response.toString());
             throw new RuntimeException();

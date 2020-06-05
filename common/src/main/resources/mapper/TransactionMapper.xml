@@ -8,6 +8,12 @@
     <resultMap type="io.diamondnetwork.model.Transfer" id="tr">
     </resultMap>
 
+    <resultMap type="io.diamondnetwork.model.Order" id="o">
+    </resultMap>
+
+    <resultMap type="io.diamondnetwork.model.Message" id="m">
+    </resultMap>
+
 
     <select id="getTxList" resultMap="tx">
         select * from t_transaction
@@ -49,6 +55,12 @@
         ORDER BY timestamp DESC
     </select>
 
+    <select id="getOrdersByTxHash" resultMap="o">
+        select * from t_order where tx_hash = #{txHash}
+    </select>
 
+    <select id="getMessagesByTxHash" resultMap="m">
+        select * from t_message where tx_hash = #{txHash}
+    </select>
 
 </mapper>

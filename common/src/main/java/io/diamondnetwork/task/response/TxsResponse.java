@@ -1,5 +1,7 @@
 package io.diamondnetwork.task.response;
 
+import io.diamondnetwork.task.response.message.TxMessage;
+
 import java.util.List;
 
 public class TxsResponse {
@@ -198,7 +200,7 @@ public class TxsResponse {
 
                 private FeeBean fee;
                 private String memo;
-                private List<MsgBean> msg;
+                private List<TxMessage> msg;
                 private List<SignaturesBean> signatures;
 
                 public FeeBean getFee() {
@@ -217,11 +219,11 @@ public class TxsResponse {
                     this.memo = memo;
                 }
 
-                public List<MsgBean> getMsg() {
+                public List<TxMessage> getMsg() {
                     return msg;
                 }
 
-                public void setMsg(List<MsgBean> msg) {
+                public void setMsg(List<TxMessage> msg) {
                     this.msg = msg;
                 }
 

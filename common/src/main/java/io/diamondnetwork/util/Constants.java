@@ -124,5 +124,6 @@ public final class Constants {
     GENESIS_TIME_STAMP = (int)(calendar.getTimeInMillis() / 1000L);
   }
 
-  public static final String nativeCoinName = "cet";
+  public static final String nativeCoinName = "dgss";
+  public static final String FEE_AMOUNT = "100000";
 }

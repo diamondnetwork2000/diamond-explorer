@@ -76,6 +76,17 @@ public class BlockSync {
                 }
             };
             tokenSyncThread.start();
+
+
+            Thread marketSyncThread = new Thread() {
+
+                @Override
+                public void run() {
+                    this.setName("marketsyncthread");
+                    syncMarketOrders();
+                }
+            };
+            marketSyncThread.start();
         }
 
 
@@ -174,9 +185,15 @@ public class BlockSync {
     }
 
 
-    private void syncToken() {
+    private void syncToken()  {
+        //sync native coin
+        int coinAdded = 0;
         while (true) {
             try {
+                if (coinAdded == 0) {
+                    coinAdded = syncService.addNativeCoin();
+                }
+
                 int lastPage = Integer.valueOf(configMapper.getConfigByName("last_token_page").getConfValue());
                 int result = syncService.syncToken(lastPage, 20);
                 if (result > 0) {
@@ -196,4 +213,27 @@ public class BlockSync {
         }
 
     }
+
+    private void syncMarketOrders() {
+        while (true) {
+            try {
+                int lastPage = Integer.valueOf(configMapper.getConfigByName("last_market_page").getConfValue());
+                int result = syncService.syncMarketTx(lastPage, 20);
+                if (result > 0) {
+                    configMapper.updateConfigValue("last_market_page", String.valueOf(++lastPage));
+                    Thread.sleep(500L);
+                } else {
+                    Thread.sleep(2000L);
+                }
+            } catch (Throwable e) {
+                try {
+                    Thread.sleep(5000L);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

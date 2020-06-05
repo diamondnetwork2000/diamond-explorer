@@ -26,6 +26,10 @@ public class TransactionService {
     @Autowired
     private TransferMapper transferMapper;
     @Autowired
+    private OrderMapper orderMapper;
+    @Autowired
+    private MessageMapper messageMapper;
+    @Autowired
     private BillMapper billMapper;
     @Autowired
     private BlockchainService blockchainService;
@@ -65,6 +69,8 @@ public class TransactionService {
         tx.setTransfers(transfers);
 
 
+        tx.setOrders(transactionDao.getOrdersByTxHash(tx.getHash()));
+        tx.setMessages(transactionDao.getMessagesByTxHash(tx.getHash()));
 
         return tx;
     }
@@ -84,5 +90,13 @@ public class TransactionService {
 
     public void addBill(Bill t) {
         billMapper.insert(t);
+    }
+
+    public void addOrder(Order t) {
+        orderMapper.insert(t);
+    }
+
+    public void addMessage(Message t) {
+        messageMapper.insert(t);
     }
 }

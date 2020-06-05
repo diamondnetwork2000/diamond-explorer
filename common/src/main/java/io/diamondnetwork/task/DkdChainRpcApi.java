@@ -23,8 +23,8 @@ public interface DkdChainRpcApi {
                                          @Query("limit") int limit);
 
 
-  @GET("txs")
-    Call<OrderTxResponse> searchMarketTxs(@Query("message.module") String module,
+    @GET("txs")
+    Call<TxsResponse> searchMarketTxs(@Query("message.module") String module,
                                          @Query("page") int page,
                                          @Query("limit") int limit);
 
@@ -36,4 +36,7 @@ public interface DkdChainRpcApi {
 
     @GET("staking/validators")
     Call<ValidatorsResponse> validators();
+
+    @GET("asset/tokens/{token}")
+    Call<TokenDetailResponse> tokenDetail(@Path("token") String token);
 }

@@ -15,7 +15,7 @@
     </resultMap>
 
     <select id="getAssetList" resultMap="asset">
-        select * from t_asset
+        select * from t_asset order by creation_height
     </select>
     <select id="getAsset" resultMap="asset">
         select * from t_asset where name = #{name}

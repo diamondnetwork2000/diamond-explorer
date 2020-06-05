@@ -7,25 +7,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@TableName(value = "t_order")
-public class Order {
+@TableName(value = "t_message")
+public class Message {
     private long id;
     private TransactionType type;
     private String sender;
     private String txHash;
-    private String tradingPair;
-    private int pricePrecision;
-    private BigInteger price;
-    private BigInteger quantity;
-    //1: buy 2: sell
-    private int side;
+    private String jsonContent;
     private Date createdAt;
     private int height;
 }

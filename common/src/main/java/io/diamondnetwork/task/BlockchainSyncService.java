@@ -3,10 +3,12 @@ package io.diamondnetwork.task;
 import io.diamondnetwork.model.*;
 import io.diamondnetwork.model.enums.TransactionType;
 import io.diamondnetwork.service.*;
-import io.diamondnetwork.task.response.AssetTxResponse;
-import io.diamondnetwork.task.response.BankTxResponse;
-import io.diamondnetwork.task.response.BlockDetail;
+import io.diamondnetwork.task.response.*;
+import io.diamondnetwork.task.response.message.CreateOrderMessage;
+import io.diamondnetwork.task.response.message.TxMessage;
+import io.diamondnetwork.util.Constants;
 import io.diamondnetwork.util.DateUtil;
+import io.diamondnetwork.util.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,40 @@ public class BlockchainSyncService {
         }
 
         return height;
+    }
+
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int addNativeCoin() throws IOException {
+        if (assetService.getAsset(Constants.nativeCoinName) != null) {
+            return 0;
+        }
+
+        Block block = blockService.getBlock(1);
+
+        if (block == null) {
+            return 0;
+        }
+
+        TokenDetailResponse body = blockchainService.tokenDetail(Constants.nativeCoinName);
+        if (body == null) {
+            return 0;
+        }
+
+
+        Asset asset = new Asset();
+        TokenDetailResponse.ResultBean.ValueBean coin = body.getResult().getValue();
+        asset.setOwner(coin.getOwner())
+                .setIssuer(coin.getOwner())
+                .setCreationHeight(1)
+                .setName(Constants.nativeCoinName)
+                .setDecimals(8)
+                .setTotalSupply(new BigInteger(coin.getTotal_supply()))
+                .setDescription("Diamond DEX native coin")
+                .setCreatedAt(block.getCreatedAt());
+
+        assetService.addAsset(asset);
+
+        return 1;
     }
 
     /**
@@ -264,6 +300,75 @@ public class BlockchainSyncService {
                                     .setAccount(msgBean.getValue().getOwner_address());
 
                             transactionService.addBill(b);
+                        }
+
+                    }
+
+                    transactionService.addTx(tx);
+                }
+            }
+
+            return response.getTxs().size();
+        }
+        return 0;
+    }
+
+
+    @Transactional(rollbackFor = RuntimeException.class)
+    public int syncMarketTx(int page, int limit) throws IOException {
+        TxsResponse response = blockchainService.searchMarketTxs("market", page,limit);
+        if (response != null && response.getTxs() != null && response.getTxs().size() > 0) {
+            for (TxsResponse.TxsBean t : response.getTxs()) {
+                Transaction tx = new Transaction();
+                tx.setHash(t.getTxhash());
+                tx.setHeight(Integer.valueOf(t.getHeight()));
+                tx.setCreatedAt(DateUtil.getTxTime(t.getTimestamp()));
+                tx.setSuccess(t.getLogs().get(0).isSuccess());
+                tx.setMsgNum(t.getTx().getValue().getMsg().size());
+                tx.setMemo(t.getTx().getValue().getMemo());
+
+                for (TxsResponse.TxsBean.EventsBeanX event : t.getEvents()) {
+                    if (event.getType().equals("message")) {
+                        for (TxsResponse.TxsBean.EventsBeanX.AttributesBeanX attribute : event.getAttributes()) {
+                            if (attribute.getKey().equals("sender")) {
+                                tx.setSender(attribute.getValue());
+                            }
+                        }
+                    }
+                }
+
+                if (transactionService.countTxByHash(tx.getHash()) == 0) {
+                    for (TxMessage msgBean : t.getTx().getValue().getMsg()) {
+                        if (msgBean.getType().equals("market/MsgCreateTradingPair")) {
+                            tx.setType(TransactionType.CREATE_MARKET);
+                        } else if (msgBean.getType().equals("market/MsgModifyPricePrecision")) {
+                            tx.setType(TransactionType.MODIFY_MARKET_PRICE);
+                        } else if (msgBean.getType().equals("market/MsgCreateOrder")) {
+                            tx.setType(TransactionType.CREATE_ORDER);
+                        } else if (msgBean.getType().equals("market/MsgCancelOrder")) {
+                            tx.setType(TransactionType.CANCEL_ORDER);
+                        }
+
+
+                        if (msgBean.getType().equals("market/MsgCreateOrder")) {
+                            CreateOrderMessage m = (CreateOrderMessage)msgBean.toValue();
+                            Order o = new Order();
+
+                            o.setPrice(new BigInteger(m.getPrice())).setQuantity(new BigInteger(m.getQuantity()))
+                                    .setSender(tx.getSender()).setTxHash(tx.getHash())
+                                    .setType(tx.getType()).setPricePrecision(m.getPrice_precision())
+                                    .setSide(m.getSide()).setTradingPair(m.getTrading_pair());
+
+                            o.setHeight(tx.getHeight()).setCreatedAt(tx.getCreatedAt());
+
+                            transactionService.addOrder(o);
+                        } else {
+                            Message m = new Message();
+                            m.setType(tx.getType()).setSender(tx.getSender())
+                                    .setTxHash(tx.getHash()).setJsonContent(JSONUtil.toJSONString(msgBean.toValue()));
+
+                            m.setHeight(tx.getHeight()).setCreatedAt(tx.getCreatedAt());
+                            transactionService.addMessage(m);
                         }
 
                     }

@@ -12,23 +12,24 @@ import lombok.experimental.Accessors;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@ApiModel("区块")
+@ApiModel("transaction")
 @TableName(value = "t_transaction")
 public class Transaction {
     private long id;
-    @ApiModelProperty("1 转账（包括内置货币和代币的转账） 2: 创建订单 3： 取消订单 4 发行代币 5 创建交易市场")
     private TransactionType type;
     private Boolean success;
     private String hash;
     private String sender;
     private String recipient;
     private String memo;
-    private long fee;
+    //fee is fixed
+    private long fee = 100000L;
 
     private Date createdAt;
     private int height;
@@ -38,4 +39,8 @@ public class Transaction {
 
     @TableField(exist = false)
     private List<Transfer> transfers;
+    @TableField(exist = false)
+    private List<Order> orders;
+    @TableField(exist = false)
+    private List<Message> messages;
 }
