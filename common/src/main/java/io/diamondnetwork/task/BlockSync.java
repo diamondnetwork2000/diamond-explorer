@@ -138,11 +138,14 @@ public class BlockSync {
 
         int startHeight = b.getBlock_meta().getHeader().getHeight() - 1000;
 
-
-
         while (true) {
             try {
-
+                int lastHeight = Integer.valueOf(configMapper.getConfigByName("last_block_height").getConfValue());
+                if (lastHeight >= startHeight) {
+                    //
+                    log.info("exit at height:{}", startHeight);
+                    return;
+                }
                 int height = syncService.syncBlock(startHeight);
                 if (height > 0) {
                     ++startHeight;
@@ -165,7 +168,7 @@ public class BlockSync {
         while (true) {
             try {
                 int lastPage = Integer.valueOf(configMapper.getConfigByName("last_tx_page").getConfValue());
-                int result = syncService.syncTransfer(lastPage, 20);
+                int result = syncService.syncTransfer(lastPage, 1);
                 if (result > 0) {
                     configMapper.updateConfigValue("last_tx_page", String.valueOf(++lastPage));
                     Thread.sleep(500L);
@@ -195,7 +198,7 @@ public class BlockSync {
                 }
 
                 int lastPage = Integer.valueOf(configMapper.getConfigByName("last_token_page").getConfValue());
-                int result = syncService.syncToken(lastPage, 20);
+                int result = syncService.syncToken(lastPage, 1);
                 if (result > 0) {
                     configMapper.updateConfigValue("last_token_page", String.valueOf(++lastPage));
                     Thread.sleep(500L);
@@ -218,7 +221,7 @@ public class BlockSync {
         while (true) {
             try {
                 int lastPage = Integer.valueOf(configMapper.getConfigByName("last_market_page").getConfValue());
-                int result = syncService.syncMarketTx(lastPage, 20);
+                int result = syncService.syncMarketTx(lastPage, 1);
                 if (result > 0) {
                     configMapper.updateConfigValue("last_market_page", String.valueOf(++lastPage));
                     Thread.sleep(500L);

@@ -8,7 +8,7 @@ CREATE TABLE `t_config` (
   `comment` varchar(128) DEFAULT NULL COMMENT 'comment',
   PRIMARY KEY (`id`),
   UNIQUE KEY `key_name_UNIQUE` (`conf_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='Global configurations';
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC COMMENT='Global configurations';
 
 
 DROP TABLE IF EXISTS `t_block`;
@@ -27,7 +27,7 @@ CREATE TABLE `t_block` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_hash` (`hash`),
   UNIQUE KEY `ix_height` (`height`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 DROP TABLE IF EXISTS `t_transaction`;
 CREATE TABLE `t_transaction` (
@@ -44,7 +44,7 @@ CREATE TABLE `t_transaction` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_hash` (`hash`),
   KEY `ix_height` (`height`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 
 DROP TABLE IF EXISTS `t_account`;
@@ -59,7 +59,7 @@ CREATE TABLE `t_account` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_address` (`address`),
   KEY `ix_height` (`creation_height`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 
 DROP TABLE IF EXISTS `t_asset`;
@@ -76,7 +76,7 @@ CREATE TABLE `t_asset` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_name` (`name`),
   KEY `ix_height` (`creation_height`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 
 DROP TABLE IF EXISTS `t_transfer`;
@@ -94,7 +94,7 @@ CREATE TABLE `t_transfer` (
   KEY `ix_hash` (`tx_hash`),
   KEY `ix_sender` (`sender`),
   KEY `ix_recipient` (`recipient`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 DROP TABLE IF EXISTS `t_validator`;
 CREATE TABLE `t_validator` (
@@ -108,7 +108,7 @@ CREATE TABLE `t_validator` (
   `created_at` datetime NOT NULL COMMENT 'creation time',
   PRIMARY KEY (`id`),
   KEY `ix_hash` (`proposer_address`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 DROP TABLE IF EXISTS `t_bill`;
 CREATE TABLE `t_bill` (
@@ -125,7 +125,7 @@ CREATE TABLE `t_bill` (
   PRIMARY KEY (`id`),
   KEY `ix_hash` (`tx_hash`),
   KEY `ix_account` (`account`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 
 DROP TABLE IF EXISTS `t_order`;
@@ -144,14 +144,14 @@ CREATE TABLE `t_order` (
   PRIMARY KEY (`id`),
   KEY `ix_hash` (`tx_hash`),
   KEY `ix_sender` (`sender`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 
 DROP TABLE IF EXISTS `t_message`;
 CREATE TABLE `t_message` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `sender` varchar(64) NOT NULL COMMENT 'the account who create the order',
-  `json_content` varchar(512) NOT NULL COMMENT 'the detailed content',
+  `json_content` varchar(512) DEFAULT NULL COMMENT 'the detailed content',
   `type` tinyint(2) NOT NULL COMMENT '1 transfer 2: create order 3： cancel order 4 issue token 5 create market',
   `height` bigint(20) NOT NULL COMMENT 'block height',
   `tx_hash` varchar(64) NOT NULL COMMENT 'transaction hash',
@@ -159,4 +159,4 @@ CREATE TABLE `t_message` (
   PRIMARY KEY (`id`),
   KEY `ix_hash` (`tx_hash`),
   KEY `ix_sender` (`sender`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

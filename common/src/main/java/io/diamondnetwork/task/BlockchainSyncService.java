@@ -363,17 +363,23 @@ public class BlockchainSyncService {
 
                             transactionService.addOrder(o);
                         } else {
-                            Message m = new Message();
-                            m.setType(tx.getType()).setSender(tx.getSender())
-                                    .setTxHash(tx.getHash()).setJsonContent(JSONUtil.toJSONString(msgBean.toValue()));
+                            //only handle the known type
+                            if (tx.getType() != null) {
+                                Message m = new Message();
+                                m.setType(tx.getType()).setSender(tx.getSender())
+                                        .setTxHash(tx.getHash()).setJsonContent(JSONUtil.toJSONString(msgBean.toValue()));
 
-                            m.setHeight(tx.getHeight()).setCreatedAt(tx.getCreatedAt());
-                            transactionService.addMessage(m);
+                                m.setHeight(tx.getHeight()).setCreatedAt(tx.getCreatedAt());
+                                transactionService.addMessage(m);
+                            }
+
                         }
 
                     }
 
-                    transactionService.addTx(tx);
+                    if (tx.getType() !=null) {
+                        transactionService.addTx(tx);
+                    }
                 }
             }
 
